@@ -8,5 +8,5 @@ sequenceDiagram
   server -->> browser: JSON {"message":"note created"}
   deactivate server
 
-  Note right of browser: The browser shows the new note without reloading the page
+  Note right of browser: The browser shows the new note without reloading the page.
 ```
