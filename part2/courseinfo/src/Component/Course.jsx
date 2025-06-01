@@ -1,7 +1,7 @@
 import Header from "./Header"
 import Content from "./Content"
 
-const Total = ({ total }) => <p>Total of {total} exercises</p>
+const Total = ({ total }) => <p><b>Total of {total} exercises</b></p>
 
 const Course = ({ course }) => {
     return (
