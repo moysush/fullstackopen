@@ -2,14 +2,16 @@ import { useState } from 'react'
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: 'Arto Hellas' }
+    { name: 'Arto Hellas', number: '123-4567890' }
   ]) 
   const [newName, setNewName] = useState('')
+  const [newNum, setNewNum] = useState('')
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    const nameObj = {
-      name: newName
+    const addObj = {
+      name: newName,
+      number: newNum
     }
     
     if(persons.some(person => person.name === newName)){
@@ -17,8 +19,9 @@ const App = () => {
       return // wont execute the codes below if true
     }
 
-    setPersons(persons.concat(nameObj))
+    setPersons(persons.concat(addObj))
     setNewName("")
+    setNewNum("")
   }
   
 
@@ -27,7 +30,10 @@ const App = () => {
       <h2>Phonebook</h2>
       <form>
         <div>
-          name: <input value={newName} onChange={(e) => setNewName(e.target.value)}/>
+          Name: <input value={newName} onChange={(e) => setNewName(e.target.value)}/>
+        </div>
+        <div>
+          Number: <input value={newNum} onChange={(e) => setNewNum(e.target.value)}/>
         </div>
         <div>
           <button type="submit" onClick={handleSubmit}>add</button>
