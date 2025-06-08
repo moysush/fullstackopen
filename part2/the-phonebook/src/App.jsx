@@ -1,4 +1,4 @@
-import axios from 'axios'
+import numService from './Service.js/number'
 import { useState, useEffect } from 'react'
 
 const Filter = ({ filter, handleFilter }) => {
@@ -42,10 +42,10 @@ const App = () => {
   const url = 'http://localhost:3001/persons'
 
   useEffect(() => {
-    axios
-      .get(url)
+    numService
+      .getAll()
       .then(response => {
-        setPersons(response.data)       
+        setPersons(response)       
       })
   }, [])
 
@@ -61,8 +61,8 @@ const App = () => {
       return // wont execute the codes below if true
     }
 
-    axios
-      .post(url, addObj)
+    numService
+      .create(addObj)
       .then(response => {        
         setPersons(persons.concat(response))
         setNewName("")
