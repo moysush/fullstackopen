@@ -27,7 +27,7 @@ const PersonsList = ({ personsToShow }) => {
   return (
     <div>
       {personsToShow.map(person =>
-        <p key={person.name}>{person.name} {person.number}</p>
+        <p key={person.id}>{person.name} {person.number}</p>
       )}
     </div>
   )
@@ -39,12 +39,12 @@ const App = () => {
   const [newNum, setNewNum] = useState('')
   const [filter, setFilter] = useState('')
 
+  const url = 'http://localhost:3001/persons'
+
   useEffect(() => {
-    console.log("effect")
     axios
-      .get('http://localhost:3001/persons')
+      .get(url)
       .then(response => {
-        console.log(response.data);
         setPersons(response.data)       
       })
   }, [])
@@ -61,9 +61,13 @@ const App = () => {
       return // wont execute the codes below if true
     }
 
-    setPersons(persons.concat(addObj))
-    setNewName("")
-    setNewNum("")
+    axios
+      .post(url, addObj)
+      .then(response => {        
+        setPersons(persons.concat(response))
+        setNewName("")
+        setNewNum("")
+      })
   }
 
   const handleFilter = (e) => {
