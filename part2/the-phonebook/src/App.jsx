@@ -23,11 +23,13 @@ const PersonForm = ({ newName, setNewName, newNum, setNewNum, handleSubmit }) =>
   )
 }
 
-const PersonsList = ({ personsToShow }) => {
+const PersonsList = ({ personsToShow, handleRemove }) => {
   return (
     <div>
       {personsToShow.map(person =>
-        <p key={person.id}>{person.name} {person.number}</p>
+        <p key={person.id}>{person.name} {person.number}
+          <button onClick={() => handleRemove(person)}>Delete</button>
+        </p>
       )}
     </div>
   )
@@ -38,8 +40,6 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNum, setNewNum] = useState('')
   const [filter, setFilter] = useState('')
-
-  const url = 'http://localhost:3001/persons'
 
   useEffect(() => {
     numService
@@ -70,6 +70,17 @@ const App = () => {
       })
   }
 
+  const handleRemove = (person) => {
+    if (confirm(`Are you sure you want to delete ${person.name}?`)){
+    numService
+      .remove(person.id)
+      .then(response => {
+        const newPerson = persons.filter(person => person.id !== response.id)
+        setPersons(newPerson)
+      })
+    }
+  } 
+
   const handleFilter = (e) => {
     const value = e.target.value;
     setFilter(value)
@@ -86,7 +97,7 @@ const App = () => {
       <h3>Add a new contact</h3>
       <PersonForm newName={newName} setNewName={setNewName} newNum={newNum} setNewNum={setNewNum} handleSubmit={handleSubmit} />
       <h3>Number list</h3>
-      <PersonsList personsToShow={personsToShow} />
+      <PersonsList personsToShow={personsToShow} handleRemove={handleRemove} />
     </div>
   )
 }
