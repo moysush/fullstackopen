@@ -1,3 +1,4 @@
+import number from './Service.js/number'
 import numService from './Service.js/number'
 import { useState, useEffect } from 'react'
 
@@ -40,12 +41,16 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNum, setNewNum] = useState('')
   const [filter, setFilter] = useState('')
+  const setEmpty = () => {
+    setNewName("")
+    setNewNum("")
+  }
 
   useEffect(() => {
     numService
       .getAll()
       .then(response => {
-        setPersons(response)       
+        setPersons(response)
       })
   }, [])
 
@@ -55,31 +60,41 @@ const App = () => {
       name: newName,
       number: newNum
     }
-
+    // check if any name already exist
     if (persons.some(person => person.name === newName)) {
-      alert(`${newName} is already added to phonebook`)
+      // find the object containing the same name and modify it's property
+      const selectObj = persons.find(person => person.name === newName)
+      const changeObj = { ...selectObj, number: newNum }
+      // show window.confirm
+      if (confirm(`${selectObj.name} already exists in the phonebook, update the number?`)) {
+        numService
+          .change(selectObj.id, changeObj)
+          .then(response => {
+            setPersons(persons.map(person => person.id !== selectObj.id ? person : response))
+            setEmpty()
+          })
+      }
       return // wont execute the codes below if true
     }
 
     numService
       .create(addObj)
-      .then(response => {        
+      .then(response => {
         setPersons(persons.concat(response))
-        setNewName("")
-        setNewNum("")
+        setEmpty()
       })
   }
 
   const handleRemove = (person) => {
-    if (confirm(`Are you sure you want to delete ${person.name}?`)){
-    numService
-      .remove(person.id)
-      .then(response => {
-        const newPerson = persons.filter(person => person.id !== response.id)
-        setPersons(newPerson)
-      })
+    if (confirm(`Are you sure you want to delete ${person.name}?`)) {
+      numService
+        .remove(person.id)
+        .then(response => {
+          const newPerson = persons.filter(person => person.id !== response.id)
+          setPersons(newPerson)
+        })
     }
-  } 
+  }
 
   const handleFilter = (e) => {
     const value = e.target.value;
