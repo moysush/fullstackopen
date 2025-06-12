@@ -1,6 +1,15 @@
 import numService from './Service.js/number'
 import { useState, useEffect } from 'react'
 
+const Notification = ({ message, messageStatus }) => {
+  return (
+    <div>
+      {
+        message !== null ? <p className={messageStatus}>{message}</p> : ''
+      }
+    </div>
+  )
+}
 const Filter = ({ filter, handleFilter }) => {
   return (
     <div>Filter: <input value={filter} onChange={handleFilter} /></div>
@@ -40,6 +49,9 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNum, setNewNum] = useState('')
   const [filter, setFilter] = useState('')
+  const [message, setMessage] = useState(null)
+  const [messageStatus, setMessageStatus] = useState('')
+
   const setEmpty = () => {
     setNewName("")
     setNewNum("")
@@ -60,6 +72,7 @@ const App = () => {
       number: newNum
     }
     // check if any name already exist
+    // some returns a boolean value
     if (persons.some(person => person.name === newName)) {
       // find the object containing the same name and modify it's property
       const selectObj = persons.find(person => person.name === newName)
@@ -71,6 +84,13 @@ const App = () => {
           .then(response => {
             setPersons(persons.map(person => person.id !== selectObj.id ? person : response))
             setEmpty()
+          }) // handling error and show a message. message status controls the css
+          .catch(error => {
+            setMessageStatus('error')
+            setMessage(`Data of ${selectObj.name} has already been deleted from server`)
+            setTimeout(() => {
+              setMessage(null)
+            }, 5000)
           })
       }
       return // wont execute the codes below if true
@@ -81,6 +101,12 @@ const App = () => {
       .then(response => {
         setPersons(persons.concat(response))
         setEmpty()
+        // notification
+        setMessageStatus('success')
+        setMessage(`Added ${response.name} successfully!`)
+        setTimeout(() => {
+          setMessage(null)
+        }, 10000)
       })
   }
 
@@ -107,6 +133,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} messageStatus={messageStatus} />
       <Filter filter={filter} handleFilter={handleFilter} />
       <h3>Add a new contact</h3>
       <PersonForm newName={newName} setNewName={setNewName} newNum={newNum} setNewNum={setNewNum} handleSubmit={handleSubmit} />
