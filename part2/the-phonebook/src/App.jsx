@@ -1,4 +1,3 @@
-import number from './Service.js/number'
 import numService from './Service.js/number'
 import { useState, useEffect } from 'react'
 
