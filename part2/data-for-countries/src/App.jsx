@@ -31,7 +31,7 @@ function App() {
             'Too many matches, specify another filter'
             : // list the names from the filtered array
             filteredCountries.map(country => (
-              <p key={country.name.common}>{country.name.common}</p>
+              <p key={country.cca2}>{country.name.common}</p>
             )
             )
         }
