@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "backend for the phonebook app",
   "license": "ISC",
-  "author": "",
+  "author": "Sush",
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
