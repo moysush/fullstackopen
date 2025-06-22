@@ -38,6 +38,19 @@ app.get('/info', (req, res) => {
         <p>${Date()}</p>`)
 })
 
+// inidividual person
+app.get('/api/persons/:id', (req, res) => {
+    const id = req.params.id // request paramenter
+    // find the exact person
+    const person = persons.find(p => p.id === id)
+    // returning server status 404 if the person isn't found
+    if(person){
+        res.send(person)
+    } else {
+        res.status(404).end()
+    }
+})
+
 const PORT = 3001
 app.listen(PORT, () => {
     console.log(`Listening on ${PORT}`)
