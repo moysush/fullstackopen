@@ -1,7 +1,7 @@
 const express = require('express')
 const app = express()
 
-app.use(express.json())
+app.use(express.json()) // for recieving data with json.parser
 
 let persons = [
     {
@@ -66,9 +66,16 @@ app.post('/api/persons', (req, res) => {
     const body = req.body // request comes with the body property
 
     // doesn't let create a new person int he phonebook if the number is missing
-    if (!body.number) {
+    if (!body.number || !body.name) {
         return res.status(400).send({
-            error: 'number missing'
+            error: 'either name or number is missing'
+        })
+    }
+
+    // check for duplicate name
+    if (persons.find(p => p.name === body.name)){
+        return res.status(400).send({
+            error: 'name must be unique'
         })
     }
 
@@ -79,9 +86,9 @@ app.post('/api/persons', (req, res) => {
 
     // add object for person
     const addPerson = {
+        id: generateId(),
         name: body.name,
         number: body.number,
-        id: generateId()
     }
 
     // finally add the person in the phonebook
