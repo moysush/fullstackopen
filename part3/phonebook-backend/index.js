@@ -46,7 +46,7 @@ app.get('/api/persons/:id', (req, res) => {
     // find the exact person
     const person = persons.find(p => p.id === id)
     // returning server status 404 if the person isn't found
-    if(person){
+    if (person) {
         res.send(person)
     } else {
         res.status(404).end()
@@ -59,6 +59,35 @@ app.delete('/api/persons/:id', (req, res) => {
     persons = persons.filter(p => p.id !== id)
     // console.log(persons);
     res.status(204).end()
+})
+
+// create new 
+app.post('/api/persons', (req, res) => {
+    const body = req.body // request comes with the body property
+
+    // doesn't let create a new person int he phonebook if the number is missing
+    if (!body.number) {
+        return res.status(400).send({
+            error: 'number missing'
+        })
+    }
+
+    // unique id using Math.random, big enough to not have the possiblity of duplicate id
+    const generateId = () => {
+        return String(Math.floor(Math.random() * 100000))
+    }
+
+    // add object for person
+    const addPerson = {
+        name: body.name,
+        number: body.number,
+        id: generateId()
+    }
+
+    // finally add the person in the phonebook
+    persons = persons.concat(addPerson)
+    // respond to show when the request is made
+    res.send(addPerson)
 })
 
 const PORT = 3001
