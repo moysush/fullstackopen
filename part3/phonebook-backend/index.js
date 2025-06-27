@@ -1,7 +1,10 @@
 const express = require('express')
+var morgan = require('morgan')
 const app = express()
 
 app.use(express.json()) // for recieving data with json.parser
+ 
+app.use(morgan('tiny'))
 
 let persons = [
     {
@@ -65,7 +68,7 @@ app.delete('/api/persons/:id', (req, res) => {
 app.post('/api/persons', (req, res) => {
     const body = req.body // request comes with the body property
 
-    // doesn't let create a new person int he phonebook if the number is missing
+    // doesn't let user create a new person int he phonebook if the number is missing
     if (!body.number || !body.name) {
         return res.status(400).send({
             error: 'either name or number is missing'
@@ -96,6 +99,12 @@ app.post('/api/persons', (req, res) => {
     // respond to show when the request is made
     res.send(addPerson)
 })
+
+const unknownEndpoint = (request, response) => {
+  response.status(400).send({ error: 'unknown endpoint' })  
+}
+
+app.use(unknownEndpoint)
 
 const PORT = 3001
 app.listen(PORT, () => {
