@@ -8,7 +8,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://fullstackopen-sehz.onrender.com/api/notes', 
+        target: 'http://localhost:3001', 
         // changeOrigin: true,
       },
     }
