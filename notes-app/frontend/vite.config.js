@@ -4,4 +4,13 @@ import react from '@vitejs/plugin-react'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  // custom server
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://fullstackopen-sehz.onrender.com/api/notes', 
+        // changeOrigin: true,
+      },
+    }
+  },
 })

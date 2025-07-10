@@ -3,7 +3,7 @@ const cors = require('cors')
 const app = express()
 
 app.use(express.json())
-// app.use(cors())
+app.use(cors())
 // to use the frontend, we need to use the dist build directory with the static middleware
 app.use(express.static('dist'))
 
