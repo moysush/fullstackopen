@@ -1,11 +1,13 @@
 const express = require('express')
 var morgan = require('morgan')
-const cors = require('cors')
 const app = express()
 
 app.use(express.json()) // for recieving data with json.parser
-app.use(cors()) // cross origin middleware
-// create token body to get the body content and stringify it show it as a string
+// static middleware for showing frontend
+app.use(express.static('dist'))
+
+// morgan is used for showing the api response in the console. 
+// create token body to get the body content and stringify it to show it as a string
 morgan.token('body', (req) => JSON.stringify(req.body))
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
