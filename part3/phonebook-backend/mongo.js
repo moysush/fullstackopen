@@ -32,8 +32,9 @@ const person = new Person({
 if (process.argv.length < 4) {
     // using Person directly because we have no use of person object here + it will only give us error
     Person.find({}).then(result => {
+        console.log('phonebook:');
         result.forEach(person => {
-            console.log(person);
+            console.log(`${person.Name} ${person.Number}`);
         })
         mongoose.connection.close()
     })
