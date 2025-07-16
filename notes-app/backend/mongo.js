@@ -1,13 +1,13 @@
 const mongoose = require('mongoose')
 
-// if (process.argv.length < 3) {
-//   console.log('give password as argument')
-//   process.exit(1)
-// }
+if (process.argv.length < 3) {
+  console.log('give password as argument')
+  process.exit(1)
+}
 
-// const password = process.argv[2]
+const password = process.argv[2]
 
-const url = `mongodb+srv://sushmoy:FzxtXgpTcPANTEht@cluster0.ipwbpuv.mongodb.net/noteapp?retryWrites=true&w=majority&appName=Cluster0`
+const url = `mongodb+srv://sushmoy:${password}@cluster0.ipwbpuv.mongodb.net/noteapp?retryWrites=true&w=majority&appName=Cluster0`
 
 mongoose.set('strictQuery',false)
 
