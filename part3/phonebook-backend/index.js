@@ -80,40 +80,44 @@ app.delete('/api/persons/:id', (req, res) => {
 app.post('/api/persons', (req, res) => {
     const body = req.body // request comes with the body property
 
-    // doesn't let user create a new person int he phonebook if the number is missing
-    if (!body.number || !body.name) {
-        return res.status(400).send({
-            error: 'either name or number is missing'
-        })
-    }
+    // // doesn't let user create a new person in the phonebook if the number is missing
+    // if (!body.number || !body.name) {
+    //     return res.status(400).send({
+    //         error: 'either name or number is missing'
+    //     })
+    // }
 
     // check for duplicate name
-    if (persons.find(p => p.name === body.name)){
-        return res.status(400).send({
-            error: 'name must be unique'
-        })
-    }
+    // if (persons.find(p => p.name === body.name)){
+    //     return res.status(400).send({
+    //         error: 'name must be unique'
+    //     })
+    // }
 
     // unique id using Math.random, big enough to not have the possiblity of duplicate id
-    const generateId = () => {
-        return String(Math.floor(Math.random() * 100000))
-    }
+    // const generateId = () => {
+    //     return String(Math.floor(Math.random() * 100000))
+    // }
 
     // add object for person
-    const addPerson = {
-        id: generateId(),
+    const addPerson = new Person({
+        // id: generateId(),
         name: body.name,
         number: body.number,
-    }
+    })
 
     // finally add the person in the phonebook
-    persons = persons.concat(addPerson)
+    // persons = persons.concat(addPerson)
     // respond to show when the request is made
-    res.send(addPerson)
+    addPerson.save().then(person => {
+        console.log(person)
+        res.send(person)
+    })
 })
 
+// unknown endpoint
 const unknownEndpoint = (request, response) => {
-  response.status(400).send({ error: 'unknown endpoint' })  
+    response.status(400).send({ error: 'unknown endpoint' })
 }
 
 app.use(unknownEndpoint)

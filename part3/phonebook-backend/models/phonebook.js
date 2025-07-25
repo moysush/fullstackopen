@@ -22,4 +22,13 @@ const personSchema = mongoose.Schema({
     number: String
 })
 
+// remove __v from the json in response
+personSchema.set('toJSON', {
+    transform: (doc, returnedObject) => {
+        returnedObject.id = returnedObject._id.toString()
+        delete returnedObject._id
+        delete returnedObject.__v
+    }
+})
+
 module.exports = mongoose.model('Person', personSchema)
