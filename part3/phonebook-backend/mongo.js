@@ -14,7 +14,7 @@ const number = process.argv[4]
 
 const url = `mongodb+srv://sushmoy:${password}@cluster0.ipwbpuv.mongodb.net/phonebook?retryWrites=true&w=majority&appName=Cluster0`
 
-mongoose.connect(url)
+mongoose.connect(url).then(res => console.log('mongodb connected'))
 
 const personSchema = mongoose.Schema({
     Name: String,
