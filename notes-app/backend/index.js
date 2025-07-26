@@ -22,7 +22,16 @@ app.get('/api/notes', (request, response) => {
     })
 })
 
-app.get('/api/notes/:id', (request, response) => {
+// error handler middleware
+const errorHandler = (error, request, response, next) => {
+    console.error(error.message);
+    if (error.name === 'CastError') {
+        return response.status(400).send({ error: 'malformatted id' })
+    }
+    next(error)
+}
+
+app.get('/api/notes/:id', (request, response, next) => {
     const id = request.params.id
     // const note = notes.find(note => note.id === id)
     // if (note) {
@@ -30,9 +39,18 @@ app.get('/api/notes/:id', (request, response) => {
     // } else {
     //     response.status(404).end()
     // }
-    Note.findById(id).then(note =>{
-        response.json(note)
-    })
+    Note.findById(id).then(note => {
+        if (note) {
+            response.json(note)
+        } else {
+            response.status(404).end()
+        }
+    }) // if request is rejected
+        .catch(error => {
+            // console.log(error);
+            // response.status(400).send({error: 'malformatted id'})
+            next(error)
+        })
 })
 
 app.delete('/api/notes/:id', (req, res) => {
@@ -58,7 +76,7 @@ app.post('/api/notes', (req, res) => {
         })
     }
     // obj for sending response
-    const note = new Note ({
+    const note = new Note({
         content: body.content,
         important: body.important || false,
         // id: generateId()
@@ -68,8 +86,10 @@ app.post('/api/notes', (req, res) => {
     // console.log(note)
     // res.json(note)
     note.save()
-    .then(savedNote => res.json(savedNote)) // will only show in req or res netowrk section
+        .then(savedNote => res.json(savedNote)) // will only show in req or res netowrk section
 })
+
+app.use(errorHandler)
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {
