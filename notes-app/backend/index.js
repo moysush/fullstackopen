@@ -5,10 +5,10 @@ const app = express()
 // loading note module
 const Note = require('./models/note')
 
-app.use(express.json())
-// app.use(cors())
 // to use the frontend, we need to use the dist build directory with the static middleware
 app.use(express.static('dist'))
+app.use(express.json())
+// app.use(cors())
 
 // let notes = [{ id: "1", content: "HTML is easy", important: true }, { id: "2", content: "Browser can execute only JavaScript", important: false }, { id: "3", content: "GET and POST are the most important methods of HTTP protocol", important: true }]
 
@@ -21,15 +21,6 @@ app.get('/api/notes', (request, response) => {
         response.json(notes)
     })
 })
-
-// error handler middleware
-const errorHandler = (error, request, response, next) => {
-    console.error(error.message);
-    if (error.name === 'CastError') {
-        return response.status(400).send({ error: 'malformatted id' })
-    }
-    next(error)
-}
 
 app.get('/api/notes/:id', (request, response, next) => {
     const id = request.params.id
@@ -88,6 +79,23 @@ app.post('/api/notes', (req, res) => {
     note.save()
         .then(savedNote => res.json(savedNote)) // will only show in req or res netowrk section
 })
+
+
+// handler of requests with unknown endpoint
+const unknownEndpoint = (request, response) => {
+    response.status(404).send({ error: 'unknown endpoint' })
+}
+
+app.use(unknownEndpoint)
+
+// error handler middleware
+const errorHandler = (error, request, response, next) => {
+    console.error(error.message);
+    if (error.name === 'CastError') {
+        return response.status(400).send({ error: 'malformatted id' })
+    }
+    next(error)
+}
 
 app.use(errorHandler)
 
