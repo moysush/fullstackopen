@@ -37,6 +37,14 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :b
 //     }
 // ]
 
+const errorHandler = (error, request, response, next) => {
+    console.log(error.message);
+     if(error.name == 'CastError'){
+        response.status(400).send({error: 'malformatted id'})
+     }
+    next(error)
+}
+
 app.get('/', (req, res) => {
     res.send('<h1>Phonebook Backend</h1>')
 })
@@ -75,6 +83,7 @@ app.delete('/api/persons/:id', (req, res) => {
     Person.findByIdAndDelete(id).then(result => {
         res.status(204).end()
     })
+    .catch(error => next(error))
 })
 
 // create new 
@@ -122,6 +131,7 @@ const unknownEndpoint = (request, response) => {
 }
 
 app.use(unknownEndpoint)
+app.use(errorHandler)
 
 // process.env.PORT sets the port dynamically or uses the 3001 if not available
 const PORT = process.env.PORT
