@@ -71,9 +71,10 @@ app.get('/api/persons/:id', (req, res) => {
 // deleting individual person
 app.delete('/api/persons/:id', (req, res) => {
     const id = req.params.id
-    persons = persons.filter(p => p.id !== id)
-    // console.log(persons);
-    res.status(204).end()
+    // persons = persons.filter(p => p.id !== id)
+    Person.findByIdAndDelete(id).then(result => {
+        res.status(204).end()
+    })
 })
 
 // create new 
