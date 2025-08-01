@@ -43,12 +43,7 @@ app.get('/api/notes', (request, response) => {
 
 app.get('/api/notes/:id', (request, response, next) => {
     const id = request.params.id
-    // const note = notes.find(note => note.id === id)
-    // if (note) {
-    //     response.json(note)
-    // } else {
-    //     response.status(404).end()
-    // }
+
     Note.findById(id).then(note => {
         if (note) {
             response.json(note)
@@ -72,13 +67,6 @@ app.delete('/api/notes/:id', (req, res) => {
     .catch(error => next(error))
 })
 
-// const generateId = () => {
-//     const maxId = notes.length > 0
-//         ? Math.max(...notes.map(n => Number(n.id)))
-//         : 0
-//     return String(maxId + 1)
-// }
-
 // data comes with the request body
 app.post('/api/notes', (req, res) => {
     const body = req.body
@@ -95,9 +83,6 @@ app.post('/api/notes', (req, res) => {
         // id: generateId()
     })
 
-    // notes = notes.concat(note)
-    // console.log(note)
-    // res.json(note)
     note.save()
         .then(savedNote => res.json(savedNote)) // will only show in req or res netowrk section
 })
