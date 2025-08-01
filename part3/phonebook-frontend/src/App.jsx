@@ -116,7 +116,7 @@ const App = () => {
       numService
         .remove(person.id)
         .then(response => {
-          const newPerson = persons.filter(person => person.id !== response.id)
+          const newPerson = persons.filter(p => p.id !== person.id)
           setPersons(newPerson)
         })
     }
