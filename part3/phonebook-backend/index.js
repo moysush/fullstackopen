@@ -40,7 +40,7 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :b
 const errorHandler = (error, request, response, next) => {
     console.log(error.message);
      if(error.name == 'CastError'){
-        response.status(400).send({error: 'malformatted id'})
+        return response.status(400).send({error: 'malformatted id'})
      }
     next(error)
 }
@@ -64,22 +64,22 @@ app.get('/info', (req, res) => {
 })
 
 // inidividual person
-app.get('/api/persons/:id', (req, res) => {
+app.get('/api/persons/:id', (req, res, next) => {
     const id = req.params.id // request paramenter
-    // find the exact person
-    const person = persons.find(p => p.id === id)
-    // returning server status 404 if the person isn't found
-    if (person) {
-        res.send(person)
-    } else {
-        res.status(404).end()
-    }
+
+    Person.findById(id).then(person => {
+        if(person){
+            res.send(person)
+        } else {
+            res.status(404).end()
+        }
+    })
+    .catch(error => next(error))
 })
 
 // deleting individual person
 app.delete('/api/persons/:id', (req, res) => {
     const id = req.params.id
-    // persons = persons.filter(p => p.id !== id)
     Person.findByIdAndDelete(id).then(result => {
         res.status(204).end()
     })
