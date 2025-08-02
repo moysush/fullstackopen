@@ -109,6 +109,14 @@ const App = () => {
           setMessage(null)
         }, 10000)
       })
+      .catch(error => {
+        console.log(error.response.data.error)
+        setMessageStatus('error')
+        setMessage(`${error.response.data.error}`)
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000)
+      })
   }
 
   const handleRemove = (person) => {
