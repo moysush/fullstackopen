@@ -14,7 +14,7 @@ const number = process.argv[4]
 
 const url = `mongodb+srv://sushmoy:${password}@cluster0.ipwbpuv.mongodb.net/phonebook?retryWrites=true&w=majority&appName=Cluster0`
 
-mongoose.connect(url).then(res => console.log('mongodb connected'))
+mongoose.connect(url).then(() => console.log('mongodb connected'))
 
 const personSchema = mongoose.Schema({
     Name: String,
@@ -40,7 +40,7 @@ if (process.argv.length < 4) {
     })
 } else {
     // saving the person
-    person.save().then(result => {
+    person.save().then(() => {
         console.log(`added ${name}, number ${number} to the phonebook`)
         mongoose.connection.close()
     })
