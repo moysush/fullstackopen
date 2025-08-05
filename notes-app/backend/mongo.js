@@ -7,11 +7,11 @@ const mongoose = require('mongoose')
 
 const password = process.argv[2]
 
-const url = `mongodb+srv://sushmoy:${password}@cluster0.ipwbpuv.mongodb.net/noteapp?retryWrites=true&w=majority&appName=Cluster0`
+const url = `${password}`
 
 mongoose.set('strictQuery',false)
 
-mongoose.connect(url).then(result => console.log('connected'))
+mongoose.connect(url).then(() => console.log('connected'))
 
 const noteSchema = new mongoose.Schema({
   content: String,
@@ -27,9 +27,9 @@ const Note = mongoose.model('Note', noteSchema)
 //   important: true,
 // })
 
-Note.find({important: true}).then(result => { // it will find every note as {} is empty
+Note.find({ important: true }).then(result => { // it will find every note as {} is empty
   result.forEach(note => {
-    console.log(note);
+    console.log(note)
   })
   mongoose.connection.close()
 })
