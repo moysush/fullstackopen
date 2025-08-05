@@ -5,7 +5,7 @@ mongoose.set('strictQuery', false)
 
 const url = process.env.MONGODB_URL
 
-mongoose.connect(url).then(res => console.log('mongodb connected')).catch(error => console.log('there was an error: ', error))
+mongoose.connect(url).then(() => console.log('mongodb connected')).catch(error => console.log('there was an error: ', error))
 
 const personSchema = mongoose.Schema({
     name: {

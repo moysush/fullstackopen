@@ -80,9 +80,9 @@ app.get('/api/persons/:id', (req, res, next) => {
 })
 
 // deleting individual person
-app.delete('/api/persons/:id', (req, res) => {
+app.delete('/api/persons/:id', (req, res, next) => {
     const id = req.params.id
-    Person.findByIdAndDelete(id).then(result => {
+    Person.findByIdAndDelete(id).then(() => {
         res.status(204).end()
     })
     .catch(error => next(error))
