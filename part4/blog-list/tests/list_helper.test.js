@@ -1,6 +1,6 @@
 const { test, describe } = require('node:test')
 const assert = require('node:assert/strict')
-const { dummy, totalLikes, favoriteBlog, mostBlogs } = require('../utils/list_helper')
+const { dummy, totalLikes, favoriteBlog, mostBlogs, mostLikes } = require('../utils/list_helper')
 
 test('dummy returns one', () => {
     assert.equal(dummy(), 1)
@@ -82,5 +82,9 @@ describe('most', () => {
     test('most blogs', () => {
         // console.log(mostBlogs(blogs));
         assert.deepEqual(mostBlogs(blogs), { author: 'Robert C. Martin', blogs: 3 })
+    })
+    test('most likes', () => {
+        console.log(mostLikes(blogs));
+        
     })
 })

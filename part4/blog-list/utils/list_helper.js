@@ -10,13 +10,30 @@ const totalLikes = (blogs) => {
 }
 
 const favoriteBlog = (blogs) => {
-    return blogs.reduce((max, blog) => blog.likes > max.likes ? blog : max, blogs[0])
+    return blogs.reduce((max, blog) => blog.likes > max.likes ? blog : max)
 }
 
 const mostBlogs = (blogs) => {
-    const count = countBy(blogs, 'author')
-    const max = maxBy(Object.entries(count))
-    return { author: max[0], blogs: max[1] }
+    // const count = countBy(blogs, 'author')
+    // const max = maxBy(Object.entries(count))
+    // return { author: max[0], blogs: max[1] }
+    const count = blogs.reduce((acc, blog) => {
+        acc[blog.author] = (acc[blog.author] || 0) + 1
+        return acc
+    }, {})
+
+    const author = Object.entries(count).reduce((most, current) => {
+        return most[1] > current[1] ? most : current
+    })
+    return { author: author[0], blogs: author[1]}
 }
 
-module.exports = { dummy, totalLikes, favoriteBlog, mostBlogs }
+const mostLikes = (blogs) => {
+    const likes = blogs.reduce((acc, blog) => {
+        acc[blog.author] = (acc[blog.author] || 0) + blog.likes
+        return acc
+    }, {})
+    return likes
+}
+
+module.exports = { dummy, totalLikes, favoriteBlog, mostBlogs, mostLikes }
