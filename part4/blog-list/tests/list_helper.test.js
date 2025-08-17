@@ -80,11 +80,11 @@ describe('favorites', () => {
 
 describe('most', () => {
     test('most blogs', () => {
-        // console.log(mostBlogs(blogs));
+        console.log(mostBlogs(blogs));
         assert.deepEqual(mostBlogs(blogs), { author: 'Robert C. Martin', blogs: 3 })
     })
     test('most likes', () => {
         console.log(mostLikes(blogs));
-        
+        assert.deepEqual(mostLikes(blogs), { author: 'Edsger W. Dijkstra', likes: 17 })
     })
 })
