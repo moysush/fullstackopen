@@ -60,20 +60,24 @@ const blogs = [
 describe('total likes', () => {
 
     test('of empty list is zero', () => {
+        console.log(totalLikes([]));
         assert.equal(totalLikes([]), 0)
     })
 
     test('when list has only one blog, equals the likes of that', () => {
+        console.log(totalLikes([blogs[1]]));
         assert.equal(totalLikes([blogs[1]]), 5)
     })
 
     test('of a bigger list is calculated right', () => {
+        console.log(totalLikes(blogs));
         assert.equal(totalLikes(blogs), 36)
     })
 })
 
 describe('favorites', () => {
     test('favorite blog', () => {
+        console.log(favoriteBlog(blogs));
         assert.deepEqual(favoriteBlog(blogs), blogs[2])
     })
 })
@@ -83,6 +87,7 @@ describe('most', () => {
         console.log(mostBlogs(blogs));
         assert.deepEqual(mostBlogs(blogs), { author: 'Robert C. Martin', blogs: 3 })
     })
+
     test('most likes', () => {
         console.log(mostLikes(blogs));
         assert.deepEqual(mostLikes(blogs), { author: 'Edsger W. Dijkstra', likes: 17 })
