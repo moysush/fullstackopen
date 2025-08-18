@@ -1,10 +1,32 @@
-const { test, after } = require('node:test')
+const { test, after, beforeEach } = require('node:test')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const assert = require('node:assert/strict')
+const Note = require('../models/note')
 
 const api = supertest(app)
+
+// ensuring database is in the same state everytime
+const initialNotes = [
+    {
+        content: 'HTML is easy',
+        important: false
+    },
+    {
+        content: 'Browser can execute only JavaScript',
+        important: true
+    }
+]
+
+beforeEach(async() => {
+    await Note.deleteMany({})
+    let noteObject = new Note(initialNotes[0])
+    await noteObject.save()
+    noteObject = new Note(initialNotes[1])
+    await noteObject.save()
+    // insertMany() can be used to save multiple notes together
+})
 
 test('notes are returned as json', async () => {
     // const response = 
@@ -28,7 +50,7 @@ test('all notes are returned', async () => {
     // console.log('Received notes:', response.body)
     // console.log('Number of notes:', response.body.length)
 
-    assert.equal(response.body.length, 2)
+    assert.equal(response.body.length, initialNotes.length)
 })
 
 test('a specific note is within the returned notes', async () => {
