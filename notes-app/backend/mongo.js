@@ -1,3 +1,4 @@
+require('dotenv').config()
 const mongoose = require('mongoose')
 
 // if (process.argv.length < 3) {
@@ -5,9 +6,9 @@ const mongoose = require('mongoose')
 //   process.exit(1)
 // }
 
-const password = process.argv[2]
+// const password = process.env.password
 
-const url = `${password}`
+const url = process.env.TEST_MONGODB_URI
 
 mongoose.set('strictQuery',false)
 
@@ -21,21 +22,21 @@ const noteSchema = new mongoose.Schema({
 
 const Note = mongoose.model('Note', noteSchema)
 
-// const note = new Note({
-//   content: 'JS is coolllll!',
-//   date: new Date(),
-//   important: true,
-// })
-
-Note.find({ important: true }).then(result => { // it will find every note as {} is empty
-  result.forEach(note => {
-    console.log(note)
-  })
-  mongoose.connection.close()
+const note = new Note({
+  content: 'HTML is easy',
+  date: new Date(),
+  important: true,
 })
 
-// note.save().then(result => {
-//   console.log('note saved!')
-//   console.log(result);
+// Note.find({ important: true }).then(result => { // it will find every note as {} is empty
+//   result.forEach(note => {
+//     console.log(note)
+//   })
 //   mongoose.connection.close()
 // })
+
+note.save().then(result => {
+  console.log('note saved!')
+  console.log(result);
+  mongoose.connection.close()
+})
