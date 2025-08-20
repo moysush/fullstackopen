@@ -75,6 +75,20 @@ test('creating new blog post', async () => {
     })
 })
 
+test('0 likes if likes is missing', async () => {
+    const newBlog = {
+        title: 'No Likes',
+        author: 'X'
+    }
+
+    const res = await api
+        .post('/api/blogs')
+        .send(newBlog)
+    // console.log(res.body.likes);
+    
+     assert.equal(res.body.likes, 0)
+})
+
 // if we don't close the db then it will not stop finishing the execution of the test
 after(async () => {
     await mongoose.connection.close()
