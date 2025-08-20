@@ -1,37 +1,31 @@
 const notesRouter = require('express').Router()
 const Note = require('../models/note')
 
-notesRouter.get('/', (request, response) => {
+notesRouter.get('/', async (request, response) => {
     Note.find({}).then(notes => {
         response.json(notes)
     })
 })
 
-notesRouter.get('/:id', (request, response, next) => {
+notesRouter.get('/:id', async (request, response) => {
   const id = request.params.id
 
-  Note.findById(id).then(note => {
+  const note = await Note.findById(id)
     if (note) {
       response.json(note)
     } else {
       response.status(404).end()
     }
-  })
-    .catch(error => {
-      next(error)
-    })
 })
 
-notesRouter.delete('/:id', (req, res, next) => {
+notesRouter.delete('/:id', async (req, res) => {
   const id = req.params.id
-  Note.findByIdAndDelete(id).then( () => {
+  await Note.findByIdAndDelete(id)
     res.status(204).end()
-  })
-    .catch(error => next(error))
 })
 
 // data comes with the request body
-notesRouter.post('/', (req, res, next) => {
+notesRouter.post('/', async (req, res) => {
   const body = req.body
   // check if content is provided
   if (!body.content) {
@@ -45,12 +39,11 @@ notesRouter.post('/', (req, res, next) => {
     important: body.important || false,
   })
 
-  note.save()
-    .then(savedNote => res.json(savedNote)) // will only show in req or res netowrk section
-    .catch(error => next(error))
+  const savedNote = await note.save()
+  res.status(201).json(savedNote)
 })
 
-notesRouter.put('/:id', (req, res, next) => {
+notesRouter.put('/:id', async (req, res, next) => {
   const { content, important } = req.body
 
   Note.findById(req.params.id)
