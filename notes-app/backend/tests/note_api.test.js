@@ -10,14 +10,19 @@ const api = supertest(app)
 
 beforeEach(async () => {
     await Note.deleteMany({})
-    let noteObject = new Note(helper.initialNotes[0])
-    await noteObject.save()
-    noteObject = new Note(helper.initialNotes[1])
-    await noteObject.save()
-    // insertMany() can be used to save multiple notes together
+    console.log('cleared');
+
+    // for (let note of helper.initialNotes){
+    //     const noteObject = new Note(note)
+    //     await noteObject.save()
+    // }
+    await Note.insertMany(helper.initialNotes)
+    console.log('saved');   
 })
 
 test('notes are returned as json', async () => {
+    console.log('entered test');
+    
     // const response = 
     await api
         .get('/api/notes')
