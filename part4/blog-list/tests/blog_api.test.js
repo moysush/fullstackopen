@@ -43,6 +43,11 @@ test('blogs are returned in JSON format', async () => {
     console.log(res.body);
 })
 
+test('blogs are returned with id property not _id', async () => {
+    const res = await api.get('/api/blogs')    
+    assert(!res.body.includes('_id'))    
+})
+
 // if we don't close the db then it will not stop finishing the execution of the test
 after(async () => {
     await mongoose.connection.close()
