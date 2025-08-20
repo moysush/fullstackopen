@@ -40,7 +40,7 @@ test('blogs are returned in JSON format', async () => {
         .expect(200)
         .expect('Content-Type', /application\/json/)
 
-    console.log(JSON.stringify(res.body, null, 2));
+    console.log(res.body);
 })
 
 // if we don't close the db then it will not stop finishing the execution of the test
