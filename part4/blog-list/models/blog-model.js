@@ -4,9 +4,11 @@ const blogSchema = mongoose.Schema({
     title: String,
     author: String,
     url: String,
-    likes: {type: Number, default: 0},
+    likes: Number
+    // likes: {type: Number, default: 0},
 })
 
+// replace _id with id, and remove __v, 
 blogSchema.set('toJSON', {
     transform: (document, returnedObject) => {
         returnedObject.id = returnedObject._id.toString()

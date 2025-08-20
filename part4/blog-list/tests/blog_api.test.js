@@ -34,7 +34,7 @@ beforeEach(async () => {
 })
 
 test('blogs are returned in JSON format', async () => {
-    // supertest let us test with expect
+    // supertest lets us test with expect
     const res = await api
         .get('/api/blogs')
         .expect(200)
@@ -51,7 +51,8 @@ test('creating new blog post', async () => {
     const addNote = {
         title: "Deep Work",
         author: "Cal Newport",
-        likes: 100
+        likes: 100,
+        url: "calnewport.com"
     }
 
     const res = await api
@@ -67,26 +68,42 @@ test('creating new blog post', async () => {
     assert.equal(updatedList.body.length, initialBlog.length + 1)
     
     // verifying the new blog without the id as it is dynamic
-    const {title, author, likes} = res.body
-    assert.deepEqual({title, author, likes}, {
+    const {title, author, likes, url} = res.body
+    assert.deepEqual({title, author, likes, url}, {
         title: 'Deep Work',
         author: 'Cal Newport',
         likes: 100,
+        url: "calnewport.com"
     })
 })
 
-test('0 likes if likes is missing', async () => {
+test('set likes: 0 if likes property is missing', async () => {
     const newBlog = {
         title: 'No Likes',
-        author: 'X'
+        author: 'X',
+        url: 'nolikes.com'
     }
 
     const res = await api
         .post('/api/blogs')
         .send(newBlog)
+
     // console.log(res.body.likes);
-    
-     assert.equal(res.body.likes, 0)
+    assert.equal(res.body.likes, 0)
+})
+
+test('either title or url deos not exist', async () => {
+    const newBlog = {
+        author: 'no title or url'
+    }
+
+    const res = await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(400)
+
+    // console.log(res.status);
+    // assert.equal(res.status, 400)
 })
 
 // if we don't close the db then it will not stop finishing the execution of the test
