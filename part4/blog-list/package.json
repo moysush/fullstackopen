@@ -7,8 +7,9 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "test": "node --test",
-    "dev": "node --watch index.js"
+    "start": "NODE_ENV=production node index.js",
+    "test": "NODE_ENV=test node --test",
+    "dev": "NODE_ENV=development node --watch index.js"
   },
   "dependencies": {
     "dotenv": "^17.2.1",
@@ -17,6 +18,7 @@
   },
   "devDependencies": {
     "lodash.countby": "^4.6.0",
-    "lodash.maxby": "^4.6.0"
+    "lodash.maxby": "^4.6.0",
+    "supertest": "^7.1.4"
   }
 }
