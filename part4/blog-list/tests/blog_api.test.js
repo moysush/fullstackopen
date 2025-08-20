@@ -39,13 +39,40 @@ test('blogs are returned in JSON format', async () => {
         .get('/api/blogs')
         .expect(200)
         .expect('Content-Type', /application\/json/)
-
-    console.log(res.body);
+    // console.log(res.body);
 })
 
-test('blogs are returned with id property not _id', async () => {
-    const res = await api.get('/api/blogs')    
-    assert(!res.body.includes('_id'))    
+test('blogs are returned with an id property, not an _id', async () => {
+    const res = await api.get('/api/blogs')
+    assert(!res.body.includes('_id'))
+})
+
+test('creating new blog post', async () => {
+    const addNote = {
+        title: "Deep Work",
+        author: "Cal Newport",
+        likes: 100
+    }
+
+    const res = await api
+        .post('/api/blogs')
+        .send(addNote)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+
+    const updatedList = await api
+        .get('/api/blogs')
+
+    // checking the length after adding the blog
+    assert.equal(updatedList.body.length, initialBlog.length + 1)
+    
+    // verifying the new blog without the id as it is dynamic
+    const {title, author, likes} = res.body
+    assert.deepEqual({title, author, likes}, {
+        title: 'Deep Work',
+        author: 'Cal Newport',
+        likes: 100,
+    })
 })
 
 // if we don't close the db then it will not stop finishing the execution of the test
