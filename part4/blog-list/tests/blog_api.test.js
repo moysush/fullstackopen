@@ -26,6 +26,11 @@ const initialBlog = [
     }
 ]
 
+const blogsInDb = async () => {
+    const blogs = await Blog.find({})
+    return blogs.map(blog => blog.toJSON())
+}
+
 beforeEach(async () => {
     await Blog.deleteMany()
     console.log('deleted');
@@ -48,7 +53,7 @@ test('blogs are returned with an id property, not an _id', async () => {
 })
 
 test('creating new blog post', async () => {
-    const addNote = {
+    const addBlog = {
         title: "Deep Work",
         author: "Cal Newport",
         likes: 100,
@@ -57,24 +62,23 @@ test('creating new blog post', async () => {
 
     const res = await api
         .post('/api/blogs')
-        .send(addNote)
+        .send(addBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/)
 
-    const updatedList = await api
-        .get('/api/blogs')
+    const updatedList = await blogsInDb()
 
     // checking the length after adding the blog
-    assert.equal(updatedList.body.length, initialBlog.length + 1)
+    assert.equal(updatedList.length, initialBlog.length + 1)
     
     // verifying the new blog without the id as it is dynamic
-    const {title, author, likes, url} = res.body
+    const {title, author, likes, url} = updatedList[2]
     assert.deepEqual({title, author, likes, url}, {
         title: 'Deep Work',
         author: 'Cal Newport',
         likes: 100,
         url: "calnewport.com"
-    })
+    })    
 })
 
 test('set likes: 0 if likes property is missing', async () => {
@@ -88,8 +92,7 @@ test('set likes: 0 if likes property is missing', async () => {
         .post('/api/blogs')
         .send(newBlog)
 
-    // console.log(res.body.likes);
-    assert.equal(res.body.likes, 0)
+        assert.equal(res.body.likes, 0)
 })
 
 test('either title or url deos not exist', async () => {
@@ -104,6 +107,32 @@ test('either title or url deos not exist', async () => {
 
     // console.log(res.status);
     // assert.equal(res.status, 400)
+})
+
+test('delete a single blog', async () => {
+    const blogs = await blogsInDb()
+    const blogToDelete = blogs[0].id
+
+    await api
+        .delete(`/api/blogs/${blogToDelete}`)
+        .expect(204)
+
+    const blogsAfter = await blogsInDb()
+    
+    assert.equal(blogsAfter.length, initialBlog.length - 1)
+})
+
+test('updating individual blog', async () => {
+    const blogToUpdate = initialBlog[0]._id
+    const updatedBlog = {
+        likes: 15
+    }
+    const res = await api
+        .put(`/api/blogs/${blogToUpdate}`) // params
+        .send(updatedBlog) // body
+        .expect(200)
+
+    assert.equal(res.body.likes, 15)
 })
 
 // if we don't close the db then it will not stop finishing the execution of the test
