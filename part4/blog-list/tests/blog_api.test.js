@@ -33,10 +33,12 @@ const blogsInDb = async () => {
 
 beforeEach(async () => {
     await Blog.deleteMany()
-    console.log('deleted');
+    // console.log('deleted');
     await Blog.insertMany(initialBlog)
-    console.log('saved')
+    // console.log('saved')
 })
+
+
 
 test('blogs are returned in JSON format', async () => {
     // supertest lets us test with expect
@@ -70,15 +72,15 @@ test('creating new blog post', async () => {
 
     // checking the length after adding the blog
     assert.equal(updatedList.length, initialBlog.length + 1)
-    
+
     // verifying the new blog without the id as it is dynamic
-    const {title, author, likes, url} = updatedList[2]
-    assert.deepEqual({title, author, likes, url}, {
+    const { title, author, likes, url } = updatedList[2]
+    assert.deepEqual({ title, author, likes, url }, {
         title: 'Deep Work',
         author: 'Cal Newport',
         likes: 100,
         url: "calnewport.com"
-    })    
+    })
 })
 
 test('set likes: 0 if likes property is missing', async () => {
@@ -92,7 +94,7 @@ test('set likes: 0 if likes property is missing', async () => {
         .post('/api/blogs')
         .send(newBlog)
 
-        assert.equal(res.body.likes, 0)
+    assert.equal(res.body.likes, 0)
 })
 
 test('either title or url deos not exist', async () => {
@@ -118,7 +120,7 @@ test('delete a single blog', async () => {
         .expect(204)
 
     const blogsAfter = await blogsInDb()
-    
+
     assert.equal(blogsAfter.length, initialBlog.length - 1)
 })
 
