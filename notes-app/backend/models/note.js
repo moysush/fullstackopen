@@ -11,6 +11,10 @@ const noteSchema = new mongoose.Schema({
   },
   date: String,
   important: Boolean,
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }
 })
 
 // remove the id and version property of mongo.js
