@@ -65,6 +65,22 @@ describe('when there is initialy one user in db', () => {
 
         assert.strictEqual(usersAtEnd.length, usersAtStart.length)
     })
+    test('creation fails if username and password is not of length greater than 4 and 6', async () => {
+        
+        const invalidUserNameAndPassword = {
+            username: '333',
+            password: '666666'
+        }
+        
+        await api
+        .post('/api/users')
+        .send(invalidUserNameAndPassword)
+        .expect(400) // custom error handler defined for ValidationError
+        
+        const users = await helper.usersInDb()
+        
+        assert.equal(users.length, 1) // data doesn't increment
+    })
 })
 
 after( async () => {
