@@ -4,10 +4,14 @@ const userSchema = new mongoose.Schema({
     username: {
         type: String,
         required: true,
+        minLength: 4,
         unique: true // this ensures the uniqueness of username
     },
     name: String,
-    passwordHash: String,
+    passwordHash: {
+        type: String,
+        minLength: 6
+    },
     notes: [
         {
             type: mongoose.Schema.Types.ObjectId,
