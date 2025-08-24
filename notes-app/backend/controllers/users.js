@@ -8,7 +8,7 @@ usersRouter.get('/', async (request, response) => {
 })
 
 usersRouter.post('/', async (request, response) => {
-    console.log('BODY:', request.body)
+    // console.log('BODY:', request.body)
     const { username, name, password } = request.body
 
     const saltRounds = 10
