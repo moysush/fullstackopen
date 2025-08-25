@@ -74,15 +74,19 @@ describe('when there is initialy some notes saved', () => {
     describe('addition of a new note', () => {
         test('succeeds with valid data', async () => {
             const users = await helper.usersInDb()
-            
+
+            const loginResponse = await api
+                .post('/api/login')
+                .send({ username: users[0].username, password: 'sekret' })
+                    
             const newNote = {
                 content: 'async/await simplifies making async calls',
                 important: true,
-                userId: users[0].id
             }
 
             await api
                 .post('/api/notes')
+                .set('Authorization', `Bearer ${loginResponse.body.token}`)
                 .send(newNote)
                 .expect(201)
                 .expect('Content-Type', /application\/json/)
