@@ -77,7 +77,7 @@ describe('when there is initialy some notes saved', () => {
 
             const loginResponse = await api
                 .post('/api/login')
-                .send({ username: users[0].username, password: 'sekret' })
+                .send({ username: users[0].username, password: 'sekret' }) // the only user saved in the database named root
                     
             const newNote = {
                 content: 'async/await simplifies making async calls',
