@@ -13,7 +13,9 @@ mongoose.connect(MONGODB_URI)
     .then(() => info("mongodb connected"))
     .catch(() => error('An error occured: ', error.message))
 
+
 app.use(express.json())
+app.use(middleware.tokenExtractor)
 app.use('/api/blogs', blogsRouter)
 app.use('/api/users', usersRouter)
 app.use('/api/login', loginRouter)
