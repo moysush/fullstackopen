@@ -24,6 +24,7 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+  const [token, setToken] = useState(null)
 
   useEffect(() => {
     noteService
@@ -32,14 +33,25 @@ const App = () => {
         setNotes(initialNote)
       })
   }, [])
-  console.log('render', notes.length, 'notes');
+
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser')
+    if(loggedUserJSON){
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+      setToken(user.token)
+    }
+  }, [])
 
   const handleLogin = async (event) => {
     event.preventDefault()
 
     try {
       const user = await loginService.login({ username, password })
+      // saving to localStorage
+      window.localStorage.setItem('loggedNoteappUser', JSON.stringify(user))
       setUser(user)
+      setToken(user.token)
       setUsername('')
       setPassword('')
     } catch {
@@ -79,7 +91,7 @@ const App = () => {
 
     noteService
     // needs to be logged in first
-      .create(noteObject, user.token)
+      .create(noteObject, token)
       .then(returnedNote => {
         setNotes(notes.concat(returnedNote))
         setNewNote("")
@@ -88,7 +100,7 @@ const App = () => {
 
   const notesToShow = showAll ? notes : notes.filter(note => note.important)
 
-  const NoteForm = () => (
+  const noteForm = () => (
     <form onSubmit={addNote}>
       <input value={newNote} onChange={(e) => setNewNote(e.target.value)} />
       <button type='submit'>Save</button>
@@ -103,8 +115,8 @@ const App = () => {
       {!user && <LoginForm handleLogin={handleLogin} username={username} setUsername={setUsername} password={password} setPassword={setPassword} />}
       {user && (
         <div>
-          <p>{user.name} logged in</p>
-          <NoteForm />
+          <p>{user.name} logged in <button onClick={() => {window.localStorage.removeItem('loggedNoteappUser'); setUser(null); setToken(null)}}>log out</button></p>
+          {noteForm()}
         </div>
       )}
 
