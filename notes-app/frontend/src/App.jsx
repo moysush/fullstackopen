@@ -78,7 +78,8 @@ const App = () => {
     }
 
     noteService
-      .create(noteObject)
+    // needs to be logged in first
+      .create(noteObject, user.token)
       .then(returnedNote => {
         setNotes(notes.concat(returnedNote))
         setNewNote("")
@@ -87,7 +88,7 @@ const App = () => {
 
   const notesToShow = showAll ? notes : notes.filter(note => note.important)
 
-  const noteForm = () => (
+  const NoteForm = () => (
     <form onSubmit={addNote}>
       <input value={newNote} onChange={(e) => setNewNote(e.target.value)} />
       <button type='submit'>Save</button>
@@ -103,7 +104,7 @@ const App = () => {
       {user && (
         <div>
           <p>{user.name} logged in</p>
-          {noteForm()}
+          <NoteForm />
         </div>
       )}
 
