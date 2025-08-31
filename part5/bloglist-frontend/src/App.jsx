@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import loginService from './services/login'
 import blogService from './services/blogs'
+import LoginForm from './components/login'
+import CreateBlog from './components/CreateBlog.jsx'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -44,10 +46,16 @@ const App = () => {
       setToken(userData.token)
       setUsername('')
       setPassword('')
-      setError(null)
+      setError(`${userData.name} successfully logged in`)
+      setTimeout(() => {
+        setError(null)
+      }, 5000)
     }
     catch (err) {
-      setError('invalid username or password', err)
+      setError('invalid username or password')
+      setTimeout(() => {
+        setError(null)
+      }, 5000)
     }
   }
 
@@ -63,71 +71,45 @@ const App = () => {
     try {
       await blogService.create(newBlog, token)
       console.log(newBlog, token);
-      
+      setError(`a new blog, ${title} by ${author} was added successfully`)
+      setTimeout(() => {
+        setError(null)
+      }, 5000)
     }
     catch (err) {
-      setError('error creating new blog')
+      setError('error creating a new blog')
+      setTimeout(() => {
+        setError(null)
+      }, 5000)
     }
   }
 
-  const loginForm = () => (
-    <div id="login">
-      <h2>log in to the application</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>
-            username
-            <input value={username} type='text' onChange={e => setUsername(e.target.value)} />
-          </label>
-        </div>
-        <div>
-          <label>
-            password
-            <input value={password} type='text' onChange={e => setPassword(e.target.value)} />
-          </label>
-        </div>
-        <button type='submit'>Login</button>
-      </form>
+  const Notification = () => (
+    <div>
+      {error &&
+        <div className={error.includes('successfully') ? 'success' : 'error'}>
+          {error}
+        </div>}
     </div>
   )
 
   return (
     <div>
-      {error && <div style={{ color: 'red' }}>{error}</div>}
+      <Notification />
 
-      {!user && loginForm()}
+      {!user && <LoginForm handleSubmit={handleSubmit} username={username} password={password} setUsername={setUsername} setPassword={setPassword} />}
 
       {user &&
         (<div id='blogs'>
-          <h2>blogs</h2>
-          <p>{user.name} logged in <button onClick={() => {setUser(window.localStorage.removeItem('loggedBlogappUser')); setUser(null); setToken(null)}}>logout</button></p>
+          <h2>Blogs</h2>
+          <p>{user.name} logged in <button onClick={() => { setUser(window.localStorage.removeItem('loggedBlogappUser')); setUser(null); setToken(null) }}>logout</button></p>
           {blogs.map(blog =>
             <Blog key={blog.id} blog={blog} />
           )}
+          <CreateBlog title={title} setTitle={setTitle} author={author} setAuthor={setAuthor} url={url} setUrl={setUrl} handleCreate={handleCreate} />
         </div>)
       }
-      <div>
-        <h2>create new</h2>
-        <div>
-          <label>
-            title:
-            <input value={title} type='text' onChange={({ target }) => setTitle(target.value)} />
-          </label>
-        </div>
-        <div>
-          <label>
-            author:
-            <input value={author} type='text' onChange={({ target }) => setAuthor(target.value)} />
-          </label>
-        </div>
-        <div>
-          <label>
-            url:
-            <input value={url} type='text' onChange={({ target }) => setUrl(target.value)} />
-          </label>
-        </div>
-        <button onClick={handleCreate}>create</button>
-      </div>
+
     </div>
   )
 }
