@@ -25,6 +25,7 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [token, setToken] = useState(null)
+  const [loginVisible, setLoginVisible] = useState(false)
 
   useEffect(() => {
     noteService
@@ -36,7 +37,7 @@ const App = () => {
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser')
-    if(loggedUserJSON){
+    if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
       setToken(user.token)
@@ -90,7 +91,7 @@ const App = () => {
     }
 
     noteService
-    // needs to be logged in first
+      // needs to be logged in first
       .create(noteObject, token)
       .then(returnedNote => {
         setNotes(notes.concat(returnedNote))
@@ -112,10 +113,21 @@ const App = () => {
       <h1>Notes</h1>
       <Notification message={errorMessage} />
 
-      {!user && <LoginForm handleLogin={handleLogin} username={username} setUsername={setUsername} password={password} setPassword={setPassword} />}
+      {!user && ( // show LoginForm if only loginVisible is set to true (default: false)
+        loginVisible ?
+          (<div>
+            <LoginForm handleLogin={handleLogin} username={username} setUsername={setUsername} password={password} setPassword={setPassword} />
+            <button onClick={() => setLoginVisible(false)}>Cancel</button>
+          </div>)
+          : (
+            <div>
+              <button onClick={() => setLoginVisible(true)}>Log In</button>
+            </div>
+          )
+      )}
       {user && (
         <div>
-          <p>{user.name} logged in <button onClick={() => {window.localStorage.removeItem('loggedNoteappUser'); setUser(null); setToken(null)}}>log out</button></p>
+          <p>{user.name} logged in <button onClick={() => { window.localStorage.removeItem('loggedNoteappUser'); setUser(null); setToken(null) }}>log out</button></p>
           {noteForm()}
         </div>
       )}
