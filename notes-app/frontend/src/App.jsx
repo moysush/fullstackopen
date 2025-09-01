@@ -4,6 +4,8 @@ import { LoginForm } from './components/Login'
 import Footer from './components/Footer'
 import noteService from './Services/notes'
 import loginService from './Services/login'
+import Togglable from './components/Togglable'
+import NoteForm from './components/NoteForm'
 
 const Notification = ({ message }) => {
   if (message === null) {
@@ -101,12 +103,7 @@ const App = () => {
 
   const notesToShow = showAll ? notes : notes.filter(note => note.important)
 
-  const noteForm = () => (
-    <form onSubmit={addNote}>
-      <input value={newNote} onChange={(e) => setNewNote(e.target.value)} />
-      <button type='submit'>Save</button>
-    </form>
-  )
+
 
   return (
     <div>
@@ -114,21 +111,22 @@ const App = () => {
       <Notification message={errorMessage} />
 
       {!user && ( // show LoginForm if only loginVisible is set to true (default: false)
-        loginVisible ?
-          (<div>
-            <LoginForm handleLogin={handleLogin} username={username} setUsername={setUsername} password={password} setPassword={setPassword} />
-            <button onClick={() => setLoginVisible(false)}>Cancel</button>
-          </div>)
-          : (
-            <div>
-              <button onClick={() => setLoginVisible(true)}>Log In</button>
-            </div>
-          )
+        <Togglable buttonLabel="Log In">
+          <LoginForm 
+            username={username}
+            password={password}
+            handleUsernameChange={({ target }) => setUsername(target.value)}
+            handlePasswordChange={({ target }) => setPassword(target.value)}
+            handleLogin={handleLogin}
+          />
+        </Togglable>
       )}
       {user && (
         <div>
           <p>{user.name} logged in <button onClick={() => { window.localStorage.removeItem('loggedNoteappUser'); setUser(null); setToken(null) }}>log out</button></p>
-          {noteForm()}
+          <Togglable buttonLabel="New Note">
+            <NoteForm addNote={addNote} newNote={newNote} setNewNote={setNewNote} />
+          </Togglable>
         </div>
       )}
 
