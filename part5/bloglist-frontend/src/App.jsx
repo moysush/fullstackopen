@@ -8,14 +8,9 @@ import Togglable from './components/Togglable.jsx'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [error, setError] = useState(null)
   const [token, setToken] = useState(null)
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
   const blogFormRef = useRef()
 
   useEffect(() => {
@@ -33,27 +28,20 @@ const App = () => {
     }
   }, [])
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    // login user details
-    const newUser = {
-      username: username,
-      password: password
-    }
+  // user login
+  const handleLogin = async (userData) => {
 
     try {
-      const userData = await loginService.login(newUser)
-      window.localStorage.setItem('loggedBlogappUser', JSON.stringify(userData))
-      setUser(userData)
-      setToken(userData.token)
-      setUsername('')
-      setPassword('')
-      setError(`${userData.name} successfully logged in`)
+      const loggedUser = await loginService.login(userData)
+      window.localStorage.setItem('loggedBlogappUser', JSON.stringify(loggedUser))
+      setUser(loggedUser)
+      setToken(loggedUser.token)
+      setError(`${loggedUser.name} successfully logged in`)
       setTimeout(() => {
         setError(null)
       }, 5000)
     }
-    catch (err) {
+    catch {
       setError('invalid username or password')
       setTimeout(() => {
         setError(null)
@@ -61,22 +49,16 @@ const App = () => {
     }
   }
 
-  const handleCreate = async (e) => {
-    e.preventDefault()
-
-    const newBlog = {
-      title: title,
-      author: author,
-      url: url
-    }
+  // new blog
+  const handleCreate = async (newBlog) => {
 
     try {
       const blog = await blogService.create(newBlog, token)
-      // hide after creating new blog
-      blogFormRef.current.toggleVisibility()
       // concat new blog with the existing blogs fetched initially
-      blogs.concat(blog)
-      setError(`a new blog, ${title} by ${author} was added successfully`)
+      setBlogs(blogs.concat(blog))
+      // hide form after creating new blog
+      blogFormRef.current.toggleVisibility()
+      setError(`a new blog, ${blog.title} by ${blog.author} was added successfully`)
       setTimeout(() => {
         setError(null)
       }, 5000)
@@ -104,7 +86,11 @@ const App = () => {
 
       <h2>Blogs</h2>
 
-      {!user && <LoginForm handleSubmit={handleSubmit} username={username} password={password} setUsername={setUsername} setPassword={setPassword} />}
+      {!user &&
+        <Togglable buttonLabel="Log In">
+          <LoginForm userData={handleLogin} />
+        </Togglable>
+      }
 
 
       {user &&
@@ -114,7 +100,7 @@ const App = () => {
             <Blog key={blog.id} blog={blog} />
           )}
           <Togglable buttonLabel="Create New Blog" ref={blogFormRef}>
-            <BlogForm title={title} setTitle={setTitle} author={author} setAuthor={setAuthor} url={url} setUrl={setUrl} handleCreate={handleCreate} />
+            <BlogForm newBlog={handleCreate} />
           </Togglable>
         </div>)
       }
