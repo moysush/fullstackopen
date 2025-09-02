@@ -38,6 +38,15 @@ body {
     margin: 10px;
 }
 
+.blog {
+    border-radius: 15px;
+    border-style: dotted;
+    border-width: 2px;
+    padding: 7px;
+    margin: 10px 0;
+    font-size: 18px;
+}
+
 h1,
 h2,
 h3,
