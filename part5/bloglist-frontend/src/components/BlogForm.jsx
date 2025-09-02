@@ -1,4 +1,4 @@
-  const CreateBlog = ({title, setTitle, author, setAuthor, url, setUrl, handleCreate}) => {
+  const BlogForm = ({title, setTitle, author, setAuthor, url, setUrl, handleCreate}) => {
     return (
       <div id="create">
         <h2>Create New</h2>
@@ -20,9 +20,9 @@
             <input value={url} type='text' onChange={({ target }) => setUrl(target.value)} />
           </label>
         </div>
-        <button onClick={handleCreate}>create</button>
+        <button onClick={handleCreate}>Create</button>
       </div>
     )
   }
 
-export default CreateBlog
+export default BlogForm

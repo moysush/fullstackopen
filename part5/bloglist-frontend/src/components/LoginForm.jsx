@@ -4,13 +4,13 @@
       <form onSubmit={handleSubmit}>
         <div>
           <label>
-            username
+            Username
             <input value={username} type='text' onChange={e => setUsername(e.target.value)} />
           </label>
         </div>
         <div>
           <label>
-            password
+            Password
             <input value={password} type='text' onChange={e => setPassword(e.target.value)} />
           </label>
         </div>
