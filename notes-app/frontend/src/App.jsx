@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Note from './components/Note'
 import { LoginForm } from './components/LoginForm'
 import Footer from './components/Footer'
@@ -24,6 +24,7 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState(null)
   const [user, setUser] = useState(null)
   const [token, setToken] = useState(null)
+  const noteFormRef = useRef()
 
   useEffect(() => {
     noteService
@@ -39,7 +40,7 @@ const App = () => {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
       setToken(user.token)
-    }
+    }    
   }, [])
 
   const handleLogin = async ({username, password}) => {
@@ -78,6 +79,7 @@ const App = () => {
 
 
   const createNote = (noteObject) => {
+    noteFormRef.current.toggleVisibility()
   // noteObject is the object passed from NoteForm
     noteService
       // needs to be logged in first with token
@@ -94,7 +96,7 @@ const App = () => {
       <h1>Notes</h1>
       <Notification message={errorMessage} />
 
-      {!user && ( // show LoginForm if only loginVisible is set to true (default: false)
+      {!user && ( // show LoginForm if only visible is set to true (default: false)
         <Togglable buttonLabel="Log In">
           <LoginForm handleLogin={handleLogin}
           />
@@ -103,7 +105,7 @@ const App = () => {
       {user && (
         <div>
           <p>{user.name} logged in <button onClick={() => { window.localStorage.removeItem('loggedNoteappUser'); setUser(null); setToken(null) }}>log out</button></p>
-          <Togglable buttonLabel="New Note">
+          <Togglable buttonLabel="New Note" ref={noteFormRef}>
             <NoteForm createNote={createNote} />
           </Togglable>
         </div>
