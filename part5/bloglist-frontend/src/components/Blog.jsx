@@ -14,13 +14,13 @@ const Blog = ({ blog }) => {
           ?
           <div>
             <div>
-              {blog.url}
+              {blog.url} - {blog.author}
             </div>
             <div>
               Likes: {blog.likes} <button>Like</button>
             </div>
             <div>
-              {blog.author}
+              {blog.user? blog.user.name : null}
             </div>
           </div>
           : null
