@@ -1,23 +1,31 @@
 import { useState } from "react"
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, updatelikes }) => {
   const [view, setView] = useState(false)
 
+  const handleLikes = (e) => {
+    e.preventDefault()
 
+    updatelikes({
+      ...blog,
+      likes: blog.likes + 1
+    })
+
+  }
   return (
     <div className="blog">
       <div style={{ fontWeight: 'bold' }}>
-        {blog.title} <button onClick={() => setView(!view)}>{view ? 'Hide' : 'View'}</button>
+        {blog.title} - {blog.author} <button onClick={() => setView(!view)}>{view ? 'Hide' : 'View'}</button>
       </div>
       {
         view
           ?
           <div>
             <div>
-              {blog.url} - {blog.author}
+              {blog.url}
             </div>
             <div>
-              Likes: {blog.likes} <button>Like</button>
+              Likes: {blog.likes} <button onClick={handleLikes}>Like</button>
             </div>
             <div>
               {blog.user? blog.user.name : null}

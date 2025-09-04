@@ -41,8 +41,8 @@ const App = () => {
         setError(null)
       }, 5000)
     }
-    catch {
-      setError('invalid username or password')
+    catch (err) {
+      setError(`invalid username or password; ${err}`)
       setTimeout(() => {
         setError(null)
       }, 5000)
@@ -64,7 +64,20 @@ const App = () => {
       }, 5000)
     }
     catch (err) {
-      setError('error creating a new blog')
+      setError(`error creating a new blog; ${err}`)
+      setTimeout(() => {
+        setError(null)
+      }, 5000)
+    }
+  }
+
+  const handleLikes = async (updateLikes) => {
+    try {
+      const updatedBlog = await blogService.update(updateLikes, token)
+      setBlogs(blogs.map(blog => blog.id === updatedBlog.id ? updatedBlog : blog))
+    }
+    catch (err) {
+      setError(`error updating the blog; ${err}`)
       setTimeout(() => {
         setError(null)
       }, 5000)
@@ -97,7 +110,7 @@ const App = () => {
         (<div id='blogs'>
           <p>{user.name} logged in <button onClick={() => { setUser(window.localStorage.removeItem('loggedBlogappUser')); setUser(null); setToken(null) }}>Logout</button></p>
           {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} />
+            <Blog key={blog.id} blog={blog} updatelikes={handleLikes} />
           )}
           <Togglable buttonLabel="Create New Blog" ref={blogFormRef}>
             <BlogForm newBlog={handleCreate} />
