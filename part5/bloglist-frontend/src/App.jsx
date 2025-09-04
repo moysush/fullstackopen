@@ -55,7 +55,7 @@ const App = () => {
     try {
       const blog = await blogService.create(newBlog, token)
       // concat new blog with the existing blogs fetched initially
-      setBlogs(blogs.concat({...blog, user})) // show the user's name with user
+      setBlogs(blogs.concat({ ...blog, user })) // show the user's name with user
       // hide form after creating new blog
       blogFormRef.current.toggleVisibility()
       setError(`a new blog, ${blog.title} by ${blog.author} was added successfully`)
@@ -71,10 +71,32 @@ const App = () => {
     }
   }
 
+  const handleDelete = async (e, blogToDelete) => {
+    e.preventDefault()
+    // only delete the blog if the condition returns true
+    if (window.confirm(`Remove blog: ${blogToDelete.title}?`)) {
+      try {
+        await blogService.remove(blogToDelete, token)
+        setBlogs(blogs.filter(blog => blog !== blogToDelete))
+        setError(`blog ${blogToDelete.title} was deleted successfully`)
+        setTimeout(() => {
+          setError(null)
+        }, 5000)
+      }
+      catch (err) {
+        setError(`blog could not be removed ${err}`)
+        setTimeout(() => {
+          setError(null)
+        }, 5000)
+      }
+    }
+
+  }
+
   const handleLikes = async (updateLikes) => {
     try {
       const updatedBlog = await blogService.update(updateLikes, token)
-      setBlogs(blogs.map(blog => blog.id === updatedBlog.id ? {...updatedBlog, user: blog.user} : blog))
+      setBlogs(blogs.map(blog => blog.id === updatedBlog.id ? { ...updatedBlog, user: blog.user } : blog))
     }
     catch (err) {
       setError(`error updating the blog; ${err}`)
@@ -113,8 +135,8 @@ const App = () => {
             .slice()
             .sort((a, b) => b.likes - a.likes)
             .map(blog =>
-            <Blog key={blog.id} blog={blog} updatelikes={handleLikes} />
-          )}
+              <Blog key={blog.id} blog={blog} handleDelete={handleDelete} updatelikes={handleLikes} />
+            )}
           <Togglable buttonLabel="Create New Blog" ref={blogFormRef}>
             <BlogForm newBlog={handleCreate} />
           </Togglable>
