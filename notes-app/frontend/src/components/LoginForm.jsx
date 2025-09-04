@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState } from 'react'
 
 const LoginForm = ({ handleLogin }) => {
   const [username, setUsername] = useState('')
@@ -11,7 +11,7 @@ const LoginForm = ({ handleLogin }) => {
     setUsername('')
     setPassword('')
   }
-  
+
   return (
     <div id="login">
       <h2>Login</h2>
