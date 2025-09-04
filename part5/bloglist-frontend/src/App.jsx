@@ -55,7 +55,7 @@ const App = () => {
     try {
       const blog = await blogService.create(newBlog, token)
       // concat new blog with the existing blogs fetched initially
-      setBlogs(blogs.concat(blog))
+      setBlogs(blogs.concat({...blog, user})) // show the user's name with user
       // hide form after creating new blog
       blogFormRef.current.toggleVisibility()
       setError(`a new blog, ${blog.title} by ${blog.author} was added successfully`)
@@ -109,7 +109,10 @@ const App = () => {
       {user &&
         (<div id='blogs'>
           <p>{user.name} logged in <button onClick={() => { setUser(window.localStorage.removeItem('loggedBlogappUser')); setUser(null); setToken(null) }}>Logout</button></p>
-          {blogs.map(blog =>
+          {blogs
+            .slice()
+            .sort((a, b) => b.likes - a.likes)
+            .map(blog =>
             <Blog key={blog.id} blog={blog} updatelikes={handleLikes} />
           )}
           <Togglable buttonLabel="Create New Blog" ref={blogFormRef}>
