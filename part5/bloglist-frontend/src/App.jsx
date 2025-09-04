@@ -74,7 +74,7 @@ const App = () => {
   const handleLikes = async (updateLikes) => {
     try {
       const updatedBlog = await blogService.update(updateLikes, token)
-      setBlogs(blogs.map(blog => blog.id === updatedBlog.id ? updatedBlog : blog))
+      setBlogs(blogs.map(blog => blog.id === updatedBlog.id ? {...updatedBlog, user: blog.user} : blog))
     }
     catch (err) {
       setError(`error updating the blog; ${err}`)
