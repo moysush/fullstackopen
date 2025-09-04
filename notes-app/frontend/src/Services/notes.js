@@ -7,7 +7,7 @@ const getAll = () => {
 
 const create = async (newObject, token) => {
   const config = {
-    headers: { Authorization: `Bearer ${token}`} 
+    headers: { Authorization: `Bearer ${token}` }
   }
   const response = await axios.post(baseUrl, newObject, config)
   return response.data
@@ -17,4 +17,4 @@ const update = (id, newObject) => {
   return axios.put(`${baseUrl}/${id}`, newObject).then(response => response.data)
 }
 
-export default { getAll, create, update}
+export default { getAll, create, update }

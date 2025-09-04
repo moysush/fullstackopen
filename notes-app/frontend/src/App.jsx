@@ -40,17 +40,17 @@ const App = () => {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
       setToken(user.token)
-    }    
+    }
   }, [])
 
-  const handleLogin = async ({username, password}) => {
+  const handleLogin = async ({ username, password }) => {
     try {
-      const user = await loginService.login({username, password})
+      const user = await loginService.login({ username, password })
       // saving to localStorage
       window.localStorage.setItem('loggedNoteappUser', JSON.stringify(user))
       setUser(user)
       setToken(user.token)
-      
+
     } catch {
       setErrorMessage('wrong credentials')
       setTimeout(() => {
@@ -80,7 +80,7 @@ const App = () => {
 
   const createNote = (noteObject) => {
     noteFormRef.current.toggleVisibility()
-  // noteObject is the object passed from NoteForm
+    // noteObject is the object passed from NoteForm
     noteService
       // needs to be logged in first with token
       .create(noteObject, token)
