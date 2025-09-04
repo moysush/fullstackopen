@@ -65,8 +65,8 @@ blogsRouter.delete('/:id', userExtractor, async (request, response) => {
     response.status(204).end()
 })
 
-blogsRouter.put('/:id', userExtractor, async (request, response, next) => {
-    const user = request.user
+blogsRouter.put('/:id', async (request, response, next) => {
+    // const user = request.user
 
     const blog = await Blog.findById(request.params.id)
 
@@ -74,13 +74,13 @@ blogsRouter.put('/:id', userExtractor, async (request, response, next) => {
         return response.status(404).json({ error: 'blog is not found' })
     }
 
-    if (blog.user.toString() !== user.id.toString()) {
-        return response.status(403).json({ error: 'not authorized to update this blog' })
-    }
+    // if (blog.user.toString() !== user.id.toString()) {
+    //     return response.status(403).json({ error: 'not authorized to update this blog' })
+    // }
 
     blog.likes = request.body.likes
     const updatedBlog = await blog.save()
-    response.json(updatedBlog) // auto sends 200 status code
+    response.json(updatedBlog) // auto sends 200 status code    
 })
 
 module.exports = blogsRouter

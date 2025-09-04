@@ -23,6 +23,7 @@ const update = async (obj, token) => {
 }
 
 const remove = async (obj, token) => {
-  await axios.delete(`${baseUrl}/${obj.id}`, config(token))
+  const response = await axios.delete(`${baseUrl}/${obj.id}`, config(token))
+  return response.data
 }
 export default { getAll, create, update, remove }
