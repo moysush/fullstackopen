@@ -30,4 +30,16 @@ describe('<Togglable />', () => {
         expect(element).toBeVisible()
     })
 
+    test('toggled content can be closed', async () => {
+        const user = userEvent.setup()
+        const button = screen.getByText('show...')
+        await user.click(button)
+
+        const closeButton = screen.getByText('Cancel')
+        await user.click(closeButton)
+
+        const element = screen.queryByText('togglable content')
+        expect(element).toBeNull()
+    })
+
 })
