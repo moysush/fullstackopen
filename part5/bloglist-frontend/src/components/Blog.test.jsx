@@ -12,7 +12,7 @@ test('blog renders the title and author', () => {
 
     render(<Blog blog={blog} />)
 
-    const titleAndAuthor = screen.getByText(/React patterns/)
+    screen.getByText(/React patterns/)
     const url = screen.queryByText("https://reactpatterns.com/")
     const likes = screen.queryByText(/Likes: 7/)
 
