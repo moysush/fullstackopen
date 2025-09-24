@@ -32,7 +32,8 @@ describe('blogs', () => {
         const user = userEvent.setup()
         await user.click(screen.getByText("View"))
 
-        // screen.getByText("https://reactpatterns.com/")
+        expect(screen.getByText("https://reactpatterns.com/")).toBeDefined();
+        screen.getByText(/Likes: 7/)
     })
 
 })
