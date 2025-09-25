@@ -8,7 +8,7 @@ content-type: application/json
 # }
 
 {
-    "username": "mluukkai",
-    "name": "Matti Luukkainen",
-    "password": "salainen"
+    "username": "sush",
+    "name": "Sushmoy",
+    "password": "root"
 }
