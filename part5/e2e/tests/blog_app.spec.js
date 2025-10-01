@@ -1,6 +1,6 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
-import { loginUser } from './helper';
+import { loginUser, createBlog } from './helper';
 import { beforeEach } from 'node:test';
 
 test.describe('Blog App', () => {
@@ -42,16 +42,20 @@ test.describe('Blog App', () => {
     test.beforeEach(async ({ page }) => {
       await loginUser(page, "sush", "root")
     })
-    test('a new blog can be created', async({page}) => {
-      await page.getByRole('button', {name: /create new blog/i}).click()
-
-      await page.getByLabel(/title/i).fill('Deep Work')
-      await page.getByLabel(/author/i).fill('Cal Newport')
-      await page.getByLabel(/url/i).fill('https://calnewport.com/deep-work-rules-for-focused-success-in-a-distracted-world/')
-      await page.getByRole('button', {name: /create/i}).click()
+    test('a new blog can be created', async ({ page }) => {
+      await createBlog(page, "Deep Work", "Cal Newport", "https://calnewport.com/deep-work-rules-for-focused-success-in-a-distracted-world/")
 
       await expect(page.getByText('a new blog, Deep Work by Cal Newport was added successfully')).toBeVisible()
       await expect(page.getByText(/Deep Work - Cal Newport/i)).toBeVisible()
+    })
+    test('blog can be liked', async ({ page }) => {
+      await createBlog(page, "So good they cant ignore you", "Cal Newport", "https://calnewport.com/deep-work-rules-for-focused-success-in-a-distracted-world/")
+
+      const blog = await page.getByText(/So good they cant ignore you - Cal Newport/i)
+
+      await blog.getByRole('button', {name: /view/i}).click()
+      await page.getByRole('button', {name: /like/i}).click()
+      await expect(page.getByText('Likes: 1')).toBeVisible()
     })
   })
 
