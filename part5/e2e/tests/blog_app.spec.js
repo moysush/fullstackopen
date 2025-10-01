@@ -51,6 +51,7 @@ test.describe('Blog App', () => {
       await page.getByRole('button', {name: /create/i}).click()
 
       await expect(page.getByText('a new blog, Deep Work by Cal Newport was added successfully')).toBeVisible()
+      await expect(page.getByText(/Deep Work - Cal Newport/i)).toBeVisible()
     })
   })
 
