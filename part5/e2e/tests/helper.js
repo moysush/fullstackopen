@@ -14,4 +14,19 @@ const createBlog = async (page, title, author, url) => {
   await page.getByRole('button', { name: /create/i }).click()
 }
 
-export { loginUser, createBlog }
+const viewButton = async(page, blog) => {
+  const selectBlog = await page.getByText(blog)
+  await selectBlog.getByRole('button', { name: /view/i }).click()
+}
+
+const likeBlog = async (page, blog) => {
+  const selectBlog = await page.getByText(blog)
+
+  // const likeButton = page.getByRole('button', { name: /like/i }).click()
+
+  const container = await selectBlog.locator("..")
+  await container.getByRole('button', { name: /like/i }).click()
+  await page.waitForTimeout(500) // waits 0.5 seconds
+}
+
+export { loginUser, createBlog, likeBlog, viewButton }
