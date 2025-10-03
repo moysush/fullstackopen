@@ -1,7 +1,7 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
 import { loginUser, createBlog } from './helper';
-import { beforeEach } from 'node:test';
+import { beforeEach, describe } from 'node:test';
 
 test.describe('Blog App', () => {
   test.beforeEach(async ({ page, request }) => {
@@ -67,8 +67,31 @@ test.describe('Blog App', () => {
       page.on('dialog', dialog => dialog.accept());
       await page.getByRole('button', { name: /remove/i }).click()
 
-      expect(page.getByText("blog Digital Minimalism was deleted successfully")).toBeVisible()
+      await expect(page.getByText("blog Digital Minimalism was deleted successfully")).toBeVisible()
     })
+    test.describe("another user", () => {
+      test.beforeEach(async ({ page, request }) => {
+        await createBlog(page, "Deep Work", "Cal Newport", "https://calnewport.com/deep-work-rules-for-focused-success-in-a-distracted-world/")
+
+        await request.post('/api/users', {
+          data: {
+            name: "someone",
+            username: "some",
+            password: "one"
+          }
+        })
+      })
+      test("cant see the remove button", async({page}) => {
+        await page.getByRole('button', {name: /logout/i}).click()
+
+        await loginUser(page, "some", "one")
+        const blog = await page.getByText(/Deep Work - Cal Newport/i)
+        await blog.getByRole('button', {name: /view/i}).click()
+        await expect(page.getByRole("button", {name: /remove/i})).not.toBeVisible()
+      })
+    })
+
+
   })
 
 })
