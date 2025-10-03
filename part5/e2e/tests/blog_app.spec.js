@@ -1,12 +1,11 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
-import { loginUser, createBlog } from './helper';
-import { beforeEach, describe } from 'node:test';
+import { loginUser, createBlog, likeBlog, viewButton } from './helper';
 
 test.describe('Blog App', () => {
   test.beforeEach(async ({ page, request }) => {
-    await page.goto('/')
     await request.post('/api/testing/reset')
+    await page.goto('/')
 
     await request.post('/api/users', {
       data: {
@@ -51,10 +50,8 @@ test.describe('Blog App', () => {
     test('blog can be liked', async ({ page }) => {
       await createBlog(page, "So good they cant ignore you", "Cal Newport", "https://calnewport.com/deep-work-rules-for-focused-success-in-a-distracted-world/")
 
-      const blog = await page.getByText(/So good they cant ignore you - Cal Newport/i)
-
-      await blog.getByRole('button', { name: /view/i }).click()
-      await page.getByRole('button', { name: /like/i }).click()
+      await viewButton(page, "So good they cant ignore you - Cal Newport")
+      await likeBlog(page, "So good they cant ignore you - Cal Newport")
       await expect(page.getByText('Likes: 1')).toBeVisible()
     })
     test('user can delete a blog', async ({ page }) => {
@@ -81,17 +78,42 @@ test.describe('Blog App', () => {
           }
         })
       })
-      test("cant see the remove button", async({page}) => {
-        await page.getByRole('button', {name: /logout/i}).click()
+      test("cant see the remove button", async ({ page }) => {
+        // logout first
+        await page.getByRole('button', { name: /logout/i }).click()
 
         await loginUser(page, "some", "one")
         const blog = await page.getByText(/Deep Work - Cal Newport/i)
-        await blog.getByRole('button', {name: /view/i}).click()
-        await expect(page.getByRole("button", {name: /remove/i})).not.toBeVisible()
+        await blog.getByRole('button', { name: /view/i }).click()
+        // remove buttton cant be seen
+        await expect(page.getByRole("button", { name: /remove/i })).not.toBeVisible()
       })
     })
+  })
+  test.describe("blog arrangement", () => {
+    test.beforeEach(async ({ page }) => {
+      await loginUser(page, "sush", "root")
 
+      await createBlog(page, "Deep Work", "Cal Newport", "https://calnewport.com/deep-work-rules-for-focused-success-in-a-distracted-world/")
+      await createBlog(page, "So good they cant ignore you", "Cal Newport", "https://calnewport.com/deep-work-rules-for-focused-success-in-a-distracted-world/")
+      await createBlog(page, "Digital Minimalism", "Cal Newport", "https://calnewport.com/deep-work-rules-for-focused-success-in-a-distracted-world/")
 
+      await viewButton(page, "Deep Work - Cal Newport")
+      await viewButton(page, "So good they cant ignore you - Cal Newport")
+      await viewButton(page, "Digital Minimalism - Cal Newport")
+
+      await likeBlog(page, "Deep Work - Cal Newport")
+      await likeBlog(page, "So good they cant ignore you - Cal Newport")
+      await likeBlog(page, "Deep Work - Cal Newport")
+      await likeBlog(page, "Digital Minimalism - Cal Newport")
+      await likeBlog(page, "Digital Minimalism - Cal Newport")
+      await likeBlog(page, "Digital Minimalism - Cal Newport")
+    })
+    test('correctly sorted', async ({ page }) => {
+      const blogs = await page.locator(".blog")
+      await expect(blogs.first()).toContainText("Digital Minimalism - Cal Newport")
+      await expect(blogs.last()).toContainText("So good they cant ignore you - Cal Newport")
+    })
   })
 
 })
