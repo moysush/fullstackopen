@@ -53,9 +53,21 @@ test.describe('Blog App', () => {
 
       const blog = await page.getByText(/So good they cant ignore you - Cal Newport/i)
 
-      await blog.getByRole('button', {name: /view/i}).click()
-      await page.getByRole('button', {name: /like/i}).click()
+      await blog.getByRole('button', { name: /view/i }).click()
+      await page.getByRole('button', { name: /like/i }).click()
       await expect(page.getByText('Likes: 1')).toBeVisible()
+    })
+    test('user can delete a blog', async ({ page }) => {
+      await createBlog(page, "Digital Minimalism", "Cal Newport", "https://calnewport.com/deep-work-rules-for-focused-success-in-a-distracted-world/")
+
+      const blog = await page.getByText(/Digital Minimalism - Cal Newport/i)
+
+      await blog.getByRole('button', { name: /view/i }).click()
+      // by default dialogs are dismissed automitacally by playwright, thus we need to accept it first
+      page.on('dialog', dialog => dialog.accept());
+      await page.getByRole('button', { name: /remove/i }).click()
+
+      expect(page.getByText("blog Digital Minimalism was deleted successfully")).toBeVisible()
     })
   })
 
