@@ -1,12 +1,12 @@
 import { useSelector, useDispatch } from "react-redux"
-import { toogleImportanceOf } from "./src/reducers/noteReducer"
+import { toogleImportanceOf } from "../reducers/noteReducer"
 
 // presentational component
 const Note = ({ note, handleClick }) => {
     return (
         <li onClick={handleClick}>
             {note.content}
-            <strong>{note.important ? 'important' : ''}</strong>
+            <strong> {note.important ? 'important' : ''}</strong>
         </li>
     )
 }
@@ -14,7 +14,15 @@ const Note = ({ note, handleClick }) => {
 // container component, not necessary but good to use in certain cases
 export const Notes = () => {
     const dispatch = useDispatch()
-    const notes = useSelector(state => state)
+    // filterChange()
+    const notes = useSelector(({ filter, notes }) => {
+        if (filter === 'ALL') {
+            return notes
+        }
+        return filter === 'IMPORTANT'
+            ? notes.filter(note => note.important)
+            : notes.filter(note => !note.important)
+    })
 
     return (
         <ul>
