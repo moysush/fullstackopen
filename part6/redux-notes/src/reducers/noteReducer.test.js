@@ -31,7 +31,7 @@ describe('noteReducer', () => {
         ]
 
         const action = {
-            type: 'TOGGLE_IMPORTANCE',
+            type: 'notes/toggleImportanceOf',
             payload: 2
         }
 
@@ -40,7 +40,7 @@ describe('noteReducer', () => {
 
         expect(newState).toHaveLength(2)
         expect(newState).toContainEqual(state[0])
-        // expect(newState[1].important).toBe(true)
+        expect(newState[1].important).toBe(true)
         
     })
 })
