@@ -7,7 +7,7 @@ export const AnecdoteForm = () => {
     const addAnecdote = (event) => {
         event.preventDefault() // prevent reload
         const content = event.target.input.value
-        event.target.input.value = '' // emptying th event field for user
+        event.target.input.value = '' // emptying the event field for user
 
         dispatch(createAnecdote(content))
     }

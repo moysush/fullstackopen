@@ -9,7 +9,7 @@ const anecdotesAtStart = [
 
 const getId = () => (100000 * Math.random()).toFixed(0)
 
-// action creators
+// action creators which we use with useDispatch()
 const asObject = (anecdote) => {
   return {
     content: anecdote,
@@ -37,9 +37,9 @@ export const vote = (id) => {
 const initialState = anecdotesAtStart.map(asObject)
 
 // cant send anything to store without using reducer
-const reducer = (state = initialState, action) => {
-  console.log('state now: ', state)
-  console.log('action', action)
+export const anecdoteReducer = (state = initialState, action) => {
+  // console.log('state now: ', state)
+  // console.log('action', action)
 
   switch (action.type) {
     case 'VOTE':
@@ -50,5 +50,3 @@ const reducer = (state = initialState, action) => {
       return state
   }
 }
-
-export default reducer
