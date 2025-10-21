@@ -35,6 +35,9 @@ describe('noteReducer', () => {
             payload: 2
         }
 
+        // const action1 = noteSlice.actions.toggleImportanceOf(2)
+        // yields:  { type: 'notes/toggleImportanceOf', payload: 2 }
+        
         deepFreeze(state)
         const newState = noteSlice.reducer(state, action)
 
