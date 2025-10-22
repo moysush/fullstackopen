@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux"
-import { createAnecdote } from "../reducers/anecdoteReducer"
+import { anecdoteSlice } from "../reducers/anecdoteReducer"
 
 export const AnecdoteForm = () => {
     const dispatch = useDispatch()
@@ -9,7 +9,7 @@ export const AnecdoteForm = () => {
         const content = event.target.input.value
         event.target.input.value = '' // emptying the event field for user
 
-        dispatch(createAnecdote(content))
+        dispatch(anecdoteSlice.actions.createAnecdote(content))
     }
 
     return (
