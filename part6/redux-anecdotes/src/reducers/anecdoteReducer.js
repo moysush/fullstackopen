@@ -1,3 +1,5 @@
+import { createSlice, current } from "@reduxjs/toolkit"
+
 const anecdotesAtStart = [
   'If it hurts, do it more often',
   'Adding manpower to a late software project makes it later!',
@@ -9,7 +11,6 @@ const anecdotesAtStart = [
 
 const getId = () => (100000 * Math.random()).toFixed(0)
 
-// action creators which we use with useDispatch()
 const asObject = (anecdote) => {
   return {
     content: anecdote,
@@ -18,35 +19,17 @@ const asObject = (anecdote) => {
   }
 }
 
-export const createAnecdote = (anecdote) => {
-  return {
-    type: 'NEW_ANECDOTE',
-    payload: {
-      anecdote: anecdote
-    }
-  }
-}
-
-export const vote = (id) => {
-  return {
-    type: 'VOTE',
-    payload: { id }
-  };
-}
-
 const initialState = anecdotesAtStart.map(asObject)
 
-// cant send anything to store without using reducer
-export const anecdoteReducer = (state = initialState, action) => {
-  // console.log('state now: ', state)
-  // console.log('action', action)
-
-  switch (action.type) {
-    case 'VOTE':
-      return state.map(anecdote => action.payload.id === anecdote.id ? { ...anecdote, votes: anecdote.votes + 1 } : anecdote)
-    case 'NEW_ANECDOTE':
-      return [...state, asObject(action.payload.anecdote)]
-    default:
-      return state
+export const anecdoteSlice = createSlice({
+  name: 'anecdotes',
+  initialState,
+  reducers: {
+    createAnecdote: (state, action) => {
+      state.push(asObject(action.payload))
+    },
+    vote: (state, action) => {
+      return state.map(anecdote => action.payload === anecdote.id ? { ...anecdote, votes: anecdote.votes + 1 } : anecdote)
+    }
   }
-}
+})
