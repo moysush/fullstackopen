@@ -2,7 +2,7 @@ import { useSelector } from "react-redux"
 
 
 const Notification = () => {
-  
+
   const message = useSelector(state => state.notification)
 
   const style = {
@@ -12,8 +12,13 @@ const Notification = () => {
     marginBottom: 10
   }
   return (
-    <div style={style}>
-      {message}
+    <div>
+      {message ?
+        <div style={style}>
+          {message}
+        </div>
+        : ''
+      }
     </div>
   )
 }

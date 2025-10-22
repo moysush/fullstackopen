@@ -1,5 +1,6 @@
 import { useDispatch } from "react-redux"
 import { anecdoteSlice } from "../reducers/anecdoteReducer"
+import { notificationSlice } from "../reducers/notificationReducer"
 
 export const AnecdoteForm = () => {
     const dispatch = useDispatch()
@@ -10,6 +11,11 @@ export const AnecdoteForm = () => {
         event.target.input.value = '' // emptying the event field for user
 
         dispatch(anecdoteSlice.actions.createAnecdote(content))
+        dispatch(notificationSlice.actions.setNotification(`Anecdote created: "${content}"`))
+
+        setTimeout(() => {
+            dispatch(notificationSlice.actions.clearNotification())
+        }, 5000)
     }
 
     return (
