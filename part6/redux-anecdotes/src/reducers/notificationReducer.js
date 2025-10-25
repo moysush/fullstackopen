@@ -10,3 +10,5 @@ export const notificationSlice = createSlice({
         clearNotification: () => ''
     }
 })
+
+export const {setNotification, clearNotification} = notificationSlice.actions

@@ -36,3 +36,5 @@ export const anecdoteSlice = createSlice({
     }
   }
 })
+
+export const {createAnecdote, vote, setAnecdotes} = anecdoteSlice.actions
