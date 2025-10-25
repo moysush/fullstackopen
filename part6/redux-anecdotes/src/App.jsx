@@ -5,14 +5,14 @@ import Filter from './components/Filter.jsx'
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { getAll } from './services/anecdotes.js'
-import { anecdoteSlice } from './reducers/anecdoteReducer.js'
+import { setAnecdotes } from './reducers/anecdoteReducer.js'
 
 const App = () => {/* much cleaner withthe components moved to their own component*/
 
   const dispatch = useDispatch()
 
   useEffect(() => {
-    getAll().then(anecdotes => dispatch(anecdoteSlice.actions.setAnecdotes(anecdotes)))
+    getAll().then(anecdotes => dispatch(setAnecdotes(anecdotes)))
   }, [dispatch])
   
   return (
