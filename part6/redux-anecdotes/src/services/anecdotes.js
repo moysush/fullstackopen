@@ -25,3 +25,24 @@ export const createNew = async(content) => {
 
     return await response.json()
 }
+
+export const updateVote = async(anecdote) => {
+    
+    const updatedAnecdote = {
+        ...anecdote,
+        votes: anecdote.votes + 1
+    }
+
+    const options = {
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(updatedAnecdote) // only send the content of updatedAnecdote, not the entire function
+    }
+    const response = await fetch(`${baseUrl}/${anecdote.id}`, options)
+
+    if(!response.ok){
+        throw new Error(`Response Status: ${response.status}`)
+    }
+
+    return await response.json()
+}
