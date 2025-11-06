@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from "react-redux"
-import { vote } from "../reducers/anecdoteReducer"
+import { increaseVote } from "../reducers/anecdoteReducer"
 import { clearNotification, setNotification } from "../reducers/notificationReducer"
 
 export const AnecdoteList = () => {
@@ -8,7 +8,7 @@ export const AnecdoteList = () => {
     const anecdotes = useSelector(state => state.anecdotes)
 
     const handleVote = (anecdote) => {
-        dispatch(vote(anecdote.id))
+        dispatch(increaseVote(anecdote))
         dispatch(setNotification(`You voted for "${anecdote.content}"`))
         // clear notification
         setTimeout(() => {
@@ -20,7 +20,7 @@ export const AnecdoteList = () => {
         <div>
             {anecdotes
                 // using filter method to filter first if there's no filter text then all contents are shown
-                .filter(anecdote => anecdote.content.toLowerCase().includes(filterText.toLowerCase()))
+                .filter(anecdote => anecdote && anecdote.content && anecdote.content.toLowerCase().includes(filterText.toLowerCase()))
                 .slice()
                 .sort((a, b) => b.votes - a.votes)
                 .map(anecdote =>
