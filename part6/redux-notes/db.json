@@ -14,6 +14,11 @@
       "content": "A new note in the server",
       "important": true,
       "id": "61e8"
+    },
+    {
+      "content": "Hello, World!",
+      "important": true,
+      "id": "324a"
     }
   ]
 }
