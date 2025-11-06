@@ -1,21 +1,20 @@
 import { useDispatch } from "react-redux"
-import { NewNote } from "./components/NewNote"
+import { NoteForm } from "./components/NoteForm"
 import { Notes } from "./components/Notes"
 import { VisibilityFilter } from "./components/VisbilityFilter"
 import { useEffect } from "react"
-import { getAll } from "./services/notes"
-import { setNotes } from "./reducers/noteReducer"
+import { initializeNotes } from "./reducers/noteReducer"
 
 const App = () => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    getAll().then(notes => dispatch(setNotes(notes)))
+    dispatch(initializeNotes())
   }, [dispatch])
 
   return (
     <div>
-      <NewNote />
+      <NoteForm />
       <VisibilityFilter />
       <Notes />
     </div>
