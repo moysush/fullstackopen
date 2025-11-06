@@ -9,6 +9,16 @@
       "content": "useReducer is an alternative way for data management",
       "important": false,
       "id": "2"
+    },
+    {
+      "id": "ffd5",
+      "content": "Hello, World!",
+      "important": true
+    },
+    {
+      "id": "f417",
+      "content": "World, Hello!",
+      "important": false
     }
   ]
 }
