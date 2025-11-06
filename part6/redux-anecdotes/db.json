@@ -33,7 +33,12 @@
     {
       "id": "5ad7",
       "content": "Hello, World!",
-      "votes": 5
+      "votes": 12
+    },
+    {
+      "id": "a651",
+      "content": "Today is a very shiny day!",
+      "votes": 2
     }
   ]
 }
