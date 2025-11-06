@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit"
-import { getAll } from "../services/anecdotes"
+import { createNew, getAll } from "../services/anecdotes"
 
 // const anecdotesAtStart = [
 //   'If it hurts, do it more often',
@@ -38,7 +38,7 @@ export const anecdoteSlice = createSlice({
   }
 })
 
-const {setAnecdotes} = anecdoteSlice.actions
+const { setAnecdotes, createAnecdote } = anecdoteSlice.actions
 
 // redux thunk autimitacally sets the dispatch to the returned function
 export const initializeAnecdotes = () => {
@@ -47,4 +47,10 @@ export const initializeAnecdotes = () => {
   }
 }
 
-export const {createAnecdote, vote} = anecdoteSlice.actions
+export const appendAnecdote = (content) => {
+  return async (dispatch) => {
+    await createNew(content).then(anecdote => dispatch(createAnecdote(anecdote)))
+  }
+}
+
+export const { vote } = anecdoteSlice.actions
