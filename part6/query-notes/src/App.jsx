@@ -6,37 +6,40 @@ const App = () => {
 
   const newNoteMutation = useMutation({
     mutationFn: createNote,
-    onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ['notes']})
+    onSuccess: (newNote) => { // newNote is the value returned by the createNote response
+      // queryClient.invalidateQueries({queryKey: ['notes']})
+      queryClient.setQueriesData('notes', notes.concat(newNote))
     }
   })
 
   const updateNoteMutation = useMutation({
     mutationFn: updateNote,
-    onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ['notes']})
+    onSuccess: (updatedNote) => {
+      // queryClient.invalidateQueries({queryKey: ['notes']})
+      queryClient.setQueryData(['notes'], (old) => old.map(note => note.id === updatedNote.id ? updatedNote : note))
     }
   })
 
   const addNote = async (event) => {
     event.preventDefault()
     const content = event.target.note.value
-    event.target.note.value = ''    
-    newNoteMutation.mutate({ content, important: true})
+    event.target.note.value = ''
+    newNoteMutation.mutate({ content, important: true })
   }
 
   const toggleImportance = (note) => {
-    updateNoteMutation.mutate({...note, important: !note.important})
+    updateNoteMutation.mutate({ ...note, important: !note.important })
   }
 
   const result = useQuery({
     queryKey: ['notes'],
-    queryFn: getNotes
+    queryFn: getNotes,
+    refetchOnWindowFocus: false
   })
 
   // console.log(JSON.parse(JSON.stringify(result)));
 
-  if(result.isLoading){
+  if (result.isLoading) {
     return <div>loading data...</div>
   }
 
