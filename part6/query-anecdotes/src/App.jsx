@@ -1,25 +1,18 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import AnecdoteForm from './components/AnecdoteForm'
 import Notification from './components/Notification'
+import { getAnecdotes } from './requests'
 
 const App = () => {
+  const queryClient = useQueryClient()
+
   const handleVote = (anecdote) => {
     console.log('vote')
   }
 
   const query = useQuery({
     queryKey: ['anecdotes'],
-    queryFn: async() => {
-      const baseUrl = "http://localhost:3001/anecdotes"
-
-      const response = await fetch(baseUrl)
-
-      if(!response.ok) {
-        throw new Error("anecdote service not available due to problems in the server")
-      }
-
-      return await response.json()
-    },
+    queryFn: getAnecdotes,
     retry: 1
   })  
 

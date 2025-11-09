@@ -1,0 +1,27 @@
+const baseUrl = "http://localhost:3001/anecdotes"
+
+export const getAnecdotes = async () => {
+    const response = await fetch(baseUrl)
+
+    if (!response.ok) {
+        throw new Error("anecdotes couldn't be retrieved")
+    }
+
+    return response.json()
+}
+
+export const createAnecdote = async(newAnecdote) => {
+    const options = {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(newAnecdote)
+    }
+
+    const response = await fetch(baseUrl, options)
+
+    if(!response.ok){
+        throw new Error("Coudn't create new anecdote")
+    }
+
+    return response.json()
+}
