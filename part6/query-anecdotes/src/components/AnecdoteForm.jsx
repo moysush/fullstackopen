@@ -1,8 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { createAnecdote } from "../requests"
+import { useContext } from "react"
+import NotificationContext from "./NotificationContext"
 
 const AnecdoteForm = () => {
   const queryClient = useQueryClient()
+
+  const { notificationDispatch } = useContext(NotificationContext)
 
   // adding the new anecdote with the previous cache by mutating it
   const newAnecdoteMutation = useMutation({
@@ -18,7 +22,11 @@ const AnecdoteForm = () => {
     event.preventDefault()
     const content = event.target.anecdote.value
     event.target.anecdote.value = ''
-    newAnecdoteMutation.mutate({content, votes: 0}) // sending it to server and updating frontend cache
+    newAnecdoteMutation.mutate({ content, votes: 0 }) // sending it to server and updating frontend cache
+    notificationDispatch({ type: 'CREATED', payload: content })
+    setTimeout(() => {
+      notificationDispatch({type: 'CLEAR'})
+    }, 5000)
   }
 
   return (
