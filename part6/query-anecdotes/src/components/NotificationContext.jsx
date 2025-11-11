@@ -11,7 +11,7 @@ const notificationReducer = (state, action) => {
       case "CLEAR":
         return ""
       default:
-        return state || 'something went wrong'
+        return state
     }
   }
 

@@ -8,9 +8,9 @@ const Notification = () => {
     borderWidth: 1,
     marginBottom: 5
   }
-  
-  const {notification} = useContext(NotificationContext)
-  
+
+  const { notification } = useContext(NotificationContext)
+
   if (!notification) return null
 
   return (
