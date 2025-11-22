@@ -35,7 +35,7 @@ const Anecdote = ({ anecdotes }) => {
   const anecdote = anecdotes.find(anecdote => anecdote.id === Number(id))
   return (
     <div>
-      <h2>{anecdote.content} by {anecdote.author}</h2>
+      <h2>{anecdote.content} { anecdote.author && `by ${anecdote.author}`}</h2>
       <p>has {anecdote.votes} votes</p>
     </div>
   )
