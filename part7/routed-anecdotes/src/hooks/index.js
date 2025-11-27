@@ -9,8 +9,12 @@ export const useField = (name) => {
         setValue(event.target.value)
     }
 
+    const clear = () => {
+        setValue('')
+    }
+
     return {
-        name, value, onChange
+        name, value, onChange, clear
     }
 
 }

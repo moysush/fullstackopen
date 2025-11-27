@@ -70,13 +70,18 @@ const CreateNew = (props) => {
   const author = useField('author')
   const info = useField('info')
 
+  const handleReset = () => {
+    content.clear(),
+    author.clear(),
+    info.clear()
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault()
     props.addNew({
       content: content.value,
       author: author.value,
-      info: author.info,
+      info: author.value,
       votes: 0
     })
 
@@ -91,21 +96,21 @@ const CreateNew = (props) => {
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input {...content} />
+          <input name={content.name} value={content.value} onChange={content.onChange}/>
         </div>
         <div>
           author
-          <input {...author} />
+          <input name={author.name} value={author.value} onChange={author.onChange} />
         </div>
         <div>
           url for more info
-          <input {...info} />
+          <input name={info.name} value={info.value} onChange={info.onChange} />
         </div>
-        <button>create</button>
+        <button type='submit'>create</button>
+        <button type='button' onClick={handleReset}>reset</button>
       </form>
     </div>
   )
-
 }
 
 const App = () => {
