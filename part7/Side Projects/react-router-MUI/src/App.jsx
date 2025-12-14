@@ -11,7 +11,8 @@ import {
   useNavigate,
   useMatch,
 } from "react-router-dom"
-
+import { IconButton, Toolbar, AppBar, Alert, FormControl, FormGroup, TextField, Button, Container, TableContainer, Table, TableRow, TableBody, TableCell } from '@mui/material'
+import Paper from '@mui/material/Paper';
 
 const Home = () => (
   <div>
@@ -39,14 +40,20 @@ const Note = ({ notes }) => {
 const Notes = ({ notes }) => (
   <div>
     <h2>Notes</h2>
-    <ul>
-      {notes.map(note =>
-        <li key={note.id}>
-          {/* sending the page to respected id here */}
-          <Link to={`/notes/${note.id}`}>{note.content}</Link>
-        </li>
-      )}
-    </ul>
+    <TableContainer component={Paper}>
+      <Table>
+        <TableBody>
+          {notes.map(note =>
+            <TableRow key={note.id}>
+              <TableCell>
+                {/* sending the page to respected id here */}
+                <Link to={`/notes/${note.id}`}>{note.content}</Link>
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </TableContainer>
   </div>
 )
 
@@ -74,13 +81,11 @@ const Login = (props) => {
     <div>
       <h2>login</h2>
       <form onSubmit={onSubmit}>
-        <div>
-          username: <input />
-        </div>
-        <div>
-          password: <input type='password' />
-        </div>
-        <button type="submit">login</button>
+        <FormGroup>
+          <TextField size='small' label='username' component={Paper} />
+          <TextField size='small' label='password' type='password' component={Paper} />
+          <Button size='small' variant='contained' type="submit">login</Button>
+        </FormGroup>
       </form>
     </div>
   )
@@ -109,9 +114,14 @@ const App = () => {
   ])
 
   const [user, setUser] = useState(null)
+  const [message, setMessage] = useState(null)
 
   const login = (user) => {
     setUser(user)
+    setMessage(`welcome ${user}`)
+    setTimeout(() => {
+      setMessage(null)
+    }, 5000)
   }
 
   const padding = {
@@ -119,15 +129,33 @@ const App = () => {
   }
 
   return (
-    <div>
+    <Container>
+      {message &&
+        <Alert serverity="success">
+          {message}
+        </Alert>
+      }
       <div>
-        <Link style={padding} to="/">home</Link>
-        <Link style={padding} to="/notes">notes</Link>
-        <Link style={padding} to="/users">users</Link>
-        {user
-          ? <em>{user} logged in</em>
-          : <Link style={padding} to="/login">login</Link>
-        }
+        <AppBar position='static' sx={{ borderRadius: '5px' }}>
+          <Toolbar>
+            <IconButton component={Paper} size='large' edge='start' color='inherit' aria-label='menu'>
+            </IconButton>
+            <Button color='inherit' component={Link} to="/">
+              home
+            </Button>
+            <Button color='inherit' component={Link} to="/notes">
+              notes            </Button>
+            <Button color='inherit' component={Link} to="/users">
+              users
+            </Button>
+            {user
+              ? <em>{user} logged in</em>
+              : <Button color='inherit' component={Link} to="/login">
+                login
+              </Button>
+            }
+          </Toolbar>
+        </AppBar>
       </div>
 
       <Routes>
@@ -142,7 +170,7 @@ const App = () => {
         <br />
         <em>Note app, Department of Computer Science 2024</em>
       </footer>
-    </div>
+    </Container>
   )
 }
 
