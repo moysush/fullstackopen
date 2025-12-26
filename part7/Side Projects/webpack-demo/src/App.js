@@ -12,10 +12,11 @@ const App = () => {
     return (
         <div className="container">
             hello, webpack {counter} clicks
+            <br />
             <button onClick={handleCLick}>
                 press
             </button>
-            {value}
+            {/* {value} */}
         </div>
     )
 }
