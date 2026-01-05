@@ -5,13 +5,18 @@ import blogService from "./services/blogs";
 import LoginForm from "./components/LoginForm.jsx";
 import BlogForm from "./components/BlogForm.jsx";
 import Togglable from "./components/Togglable.jsx";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { clear, setMessage } from "./reducers/notificationSlice.js";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
-  const [error, setError] = useState(null);
   const [token, setToken] = useState(null);
   const blogFormRef = useRef();
+
+  const notification = useSelector((state) => state.notification.message);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -36,14 +41,14 @@ const App = () => {
       );
       setUser(loggedUser);
       setToken(loggedUser.token);
-      setError(`${loggedUser.name} successfully logged in`);
+      dispatch(setMessage(`${loggedUser.name} successfully logged in`));
       setTimeout(() => {
-        setError(null);
+        dispatch(clear());
       }, 5000);
     } catch (err) {
-      setError(`invalid username or password; ${err}`);
+      dispatch(setMessage(`invalid username or password; ${err}`));
       setTimeout(() => {
-        setError(null);
+        dispatch(clear());
       }, 5000);
     }
   };
@@ -56,16 +61,18 @@ const App = () => {
       setBlogs(blogs.concat({ ...blog, user })); // show the user's name with user
       // hide form after creating new blog
       blogFormRef.current.toggleVisibility();
-      setError(
-        `a new blog, ${blog.title} by ${blog.author} was added successfully`,
+      dispatch(
+        setMessage(
+          `a new blog, ${blog.title} by ${blog.author} was added successfully`,
+        ),
       );
       setTimeout(() => {
-        setError(null);
+        dispatch(clear());
       }, 5000);
     } catch (err) {
-      setError(`error creating a new blog; ${err}`);
+      dispatch(setMessage(`error creating a new blog; ${err}`));
       setTimeout(() => {
-        setError(null);
+        dispatch(clear());
       }, 5000);
     }
   };
@@ -77,14 +84,16 @@ const App = () => {
       try {
         await blogService.remove(blogToDelete, token);
         setBlogs(blogs.filter((blog) => blog !== blogToDelete));
-        setError(`blog ${blogToDelete.title} was deleted successfully`);
+        dispatch(
+          setMessage(`blog ${blogToDelete.title} was deleted successfully`),
+        );
         setTimeout(() => {
-          setError(null);
+          dispatch(clear());
         }, 5000);
       } catch (err) {
-        setError(`blog could not be removed ${err}`);
+        dispatch(setMessage(`blog could not be removed ${err}`));
         setTimeout(() => {
-          setError(null);
+          dispatch(clear());
         }, 5000);
       }
     }
@@ -101,18 +110,22 @@ const App = () => {
         ),
       );
     } catch (err) {
-      setError(`error updating the blog; ${err}`);
+      dispatch(setMessage(`error updating the blog; ${err}`));
       setTimeout(() => {
-        setError(null);
+        dispatch(clear());
       }, 5000);
     }
   };
 
   const Notification = () => (
     <div>
-      {error && (
-        <div className={error.includes("successfully") ? "success" : "error"}>
-          {error}
+      {notification && (
+        <div
+          className={
+            notification.includes("successfully") ? "success" : "error"
+          }
+        >
+          {notification}
         </div>
       )}
     </div>
