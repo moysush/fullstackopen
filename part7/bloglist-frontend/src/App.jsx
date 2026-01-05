@@ -7,7 +7,7 @@ import BlogForm from "./components/BlogForm.jsx";
 import Togglable from "./components/Togglable.jsx";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { clear, setMessage } from "./reducers/notificationSlice.js";
+import { setNotification } from "./reducers/notificationSlice.js";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -15,7 +15,7 @@ const App = () => {
   const [token, setToken] = useState(null);
   const blogFormRef = useRef();
 
-  const notification = useSelector((state) => state.notification.message);
+  const notification = useSelector((state) => state.notification);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -41,15 +41,9 @@ const App = () => {
       );
       setUser(loggedUser);
       setToken(loggedUser.token);
-      dispatch(setMessage(`${loggedUser.name} successfully logged in`));
-      setTimeout(() => {
-        dispatch(clear());
-      }, 5000);
+      dispatch(setNotification(`${loggedUser.name} successfully logged in`, 5));
     } catch (err) {
-      dispatch(setMessage(`invalid username or password; ${err}`));
-      setTimeout(() => {
-        dispatch(clear());
-      }, 5000);
+      dispatch(setNotification(`invalid username or password; ${err}`, 5));
     }
   };
 
@@ -62,18 +56,13 @@ const App = () => {
       // hide form after creating new blog
       blogFormRef.current.toggleVisibility();
       dispatch(
-        setMessage(
+        setNotification(
           `a new blog, ${blog.title} by ${blog.author} was added successfully`,
+          5,
         ),
       );
-      setTimeout(() => {
-        dispatch(clear());
-      }, 5000);
     } catch (err) {
-      dispatch(setMessage(`error creating a new blog; ${err}`));
-      setTimeout(() => {
-        dispatch(clear());
-      }, 5000);
+      dispatch(setNotification(`error creating a new blog; ${err}`, 5));
     }
   };
 
@@ -85,16 +74,13 @@ const App = () => {
         await blogService.remove(blogToDelete, token);
         setBlogs(blogs.filter((blog) => blog !== blogToDelete));
         dispatch(
-          setMessage(`blog ${blogToDelete.title} was deleted successfully`),
+          setNotification(
+            `blog ${blogToDelete.title} was deleted successfully`,
+            5,
+          ),
         );
-        setTimeout(() => {
-          dispatch(clear());
-        }, 5000);
       } catch (err) {
-        dispatch(setMessage(`blog could not be removed ${err}`));
-        setTimeout(() => {
-          dispatch(clear());
-        }, 5000);
+        dispatch(setNotification(`blog could not be removed ${err}`, 5));
       }
     }
   };
@@ -110,10 +96,7 @@ const App = () => {
         ),
       );
     } catch (err) {
-      dispatch(setMessage(`error updating the blog; ${err}`));
-      setTimeout(() => {
-        dispatch(clear());
-      }, 5000);
+      dispatch(setNotification(`error updating the blog; ${err}`, 5));
     }
   };
 
