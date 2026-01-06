@@ -1,0 +1,42 @@
+import { createSlice } from "@reduxjs/toolkit";
+import blogService from "../services/blogs";
+
+const initialState = [];
+
+const blogsSlice = createSlice({
+  name: "blogs",
+  initialState,
+  reducers: {
+    getBlog: (state, action) => action.payload,
+    addBlog: (state, action) => state.concat(action.payload),
+    removeBlog: (state, action) =>
+      state.filter((blog) => blog.id !== action.payload.id),
+  },
+});
+
+export const { getBlog, addBlog, removeBlog } = blogsSlice.actions;
+
+export const fetchBlogs = () => {
+  return (dispatch) => {
+    blogService.getAll().then((data) => {
+      dispatch(getBlog(data));
+    });
+  };
+};
+
+export const createBlog = (blog, token, user) => {
+  return (dispatch) => {
+    blogService.create(blog, token).then((data) => {
+      dispatch(addBlog({ ...data, user }));
+    });
+  };
+};
+
+export const deleteBlog = (blog, token) => {
+  return (dispatch) => {
+    // since backend does not return anything we need to pass the blog directly
+    blogService.remove(blog, token).then(() => dispatch(removeBlog(blog)));
+  };
+};
+
+export default blogsSlice.reducer;
