@@ -46,4 +46,10 @@ export const deleteBlog = (blog, token) => {
   };
 };
 
+export const updateBlog = (blog, token) => {
+  return (dispatch) => {
+    blogService.update(blog, token).then((data) => dispatch(updateLike(data)));
+  };
+};
+
 export default blogsSlice.reducer;
