@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import Blog from "./components/Blog";
 import loginService from "./services/login";
-import blogService from "./services/blogs";
 import LoginForm from "./components/LoginForm.jsx";
 import BlogForm from "./components/BlogForm.jsx";
 import Togglable from "./components/Togglable.jsx";
@@ -12,7 +11,7 @@ import {
   createBlog,
   deleteBlog,
   fetchBlogs,
-  updateLike,
+  updateBlog,
 } from "./reducers/blogsSlice.js";
 
 const App = () => {
@@ -92,15 +91,7 @@ const App = () => {
 
   const handleLikes = async (like) => {
     try {
-      const updatedBlog = await blogService.update(like, token);
-      dispatch(updateLike(updatedBlog));
-      // setBlogs(
-      //   blogs.map((blog) =>
-      //     blog.id === updatedBlog.id
-      //       ? { ...updatedBlog, user: blog.user }
-      //       : blog,
-      //   ),
-      // );
+      dispatch(updateBlog(like, token));
     } catch (err) {
       dispatch(setNotification(`error updating the blog; ${err}`, 5));
     }
