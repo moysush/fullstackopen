@@ -11,10 +11,17 @@ const blogsSlice = createSlice({
     addBlog: (state, action) => state.concat(action.payload),
     removeBlog: (state, action) =>
       state.filter((blog) => blog.id !== action.payload.id),
+    updateLike: (state, action) => {
+      return state.map((blog) =>
+        blog.id === action.payload.id
+          ? { ...action.payload, user: blog.user }
+          : blog,
+      );
+    },
   },
 });
 
-export const { getBlog, addBlog, removeBlog } = blogsSlice.actions;
+export const { getBlog, addBlog, removeBlog, updateLike } = blogsSlice.actions;
 
 export const fetchBlogs = () => {
   return (dispatch) => {

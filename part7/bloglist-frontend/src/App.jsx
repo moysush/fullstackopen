@@ -8,7 +8,12 @@ import Togglable from "./components/Togglable.jsx";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { setNotification } from "./reducers/notificationSlice.js";
-import { createBlog, deleteBlog, fetchBlogs } from "./reducers/blogsSlice.js";
+import {
+  createBlog,
+  deleteBlog,
+  fetchBlogs,
+  updateLike,
+} from "./reducers/blogsSlice.js";
 
 const App = () => {
   const blogs = useSelector((state) => state.blogs);
@@ -85,16 +90,17 @@ const App = () => {
     }
   };
 
-  const handleLikes = async (updateLikes) => {
+  const handleLikes = async (like) => {
     try {
-      const updatedBlog = await blogService.update(updateLikes, token);
-      setBlogs(
-        blogs.map((blog) =>
-          blog.id === updatedBlog.id
-            ? { ...updatedBlog, user: blog.user }
-            : blog,
-        ),
-      );
+      const updatedBlog = await blogService.update(like, token);
+      dispatch(updateLike(updatedBlog));
+      // setBlogs(
+      //   blogs.map((blog) =>
+      //     blog.id === updatedBlog.id
+      //       ? { ...updatedBlog, user: blog.user }
+      //       : blog,
+      //   ),
+      // );
     } catch (err) {
       dispatch(setNotification(`error updating the blog; ${err}`, 5));
     }
