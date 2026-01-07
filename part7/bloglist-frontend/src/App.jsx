@@ -6,42 +6,47 @@ import BlogForm from "./components/BlogForm.jsx";
 import Togglable from "./components/Togglable.jsx";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import {
-  createBlog,
-  deleteBlog,
-  fetchBlogs,
-  updateBlog,
-} from "./reducers/blogsSlice.js";
+import { deleteBlog, fetchBlogs, updateBlog } from "./reducers/blogsSlice.js";
 import { logout, setToken, setUser } from "./reducers/loginSlice.js";
-import { useReducer } from "react";
 import Notification from "./components/Notification.jsx";
 import { NotificationContext } from "./NotificationContext.js";
-
-function notifReducer(state, action) {
-  if (action.type === "setMessage") {
-    return action.payload;
-  } else if (action.type === "clear") {
-    return null;
-  }
-  throw Error("Unknown action.");
-}
+import { useNotification } from "./hooks/useNotification.js";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query";
+import blogService from "./services/blogs.js";
 
 const App = () => {
-  const blogs = useSelector((state) => state.blogs);
+  // const blogs = useSelector((state) => state.blogs);
   const user = useSelector((state) => state.login.user);
   const token = useSelector((state) => state.login.token);
-  const [notification, notifDispatch] = useReducer(notifReducer, null);
+  const [notification, setNotification] = useNotification();
   const blogFormRef = useRef();
-
   const dispatch = useDispatch();
 
-  // clean function for the notification setting with timeout
-  const setNotification = (state, action, seconds = 5) => {
-    notifDispatch({ type: `${action}`, payload: state });
-    setTimeout(() => {
-      notifDispatch({ type: "clear", payload: null });
-    }, seconds * 1000);
-  };
+  const queryClient = useQueryClient();
+
+  const {
+    data: blogs = [],
+    isPending,
+    error,
+  } = useQuery({
+    queryKey: ["blogs"],
+    queryFn: () => blogService.getAll(),
+  });
+  console.log(blogs);
+
+  // create new blog
+  const newBlogMutation = useMutation({
+    mutationFn: (newBlog) => blogService.create(newBlog, token),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["blogs"] });
+    },
+  });
 
   useEffect(() => {
     dispatch(fetchBlogs());
@@ -78,7 +83,8 @@ const App = () => {
   // new blog
   const handleCreate = async (newBlog) => {
     try {
-      dispatch(createBlog(newBlog, token, user));
+      // await dispatch(createBlog(newBlog, token, user));
+      newBlogMutation.mutate(newBlog);
       blogFormRef.current.toggleVisibility();
       setNotification(
         `a new blog, ${newBlog.title} by ${newBlog.author} was added successfully`,
@@ -94,7 +100,7 @@ const App = () => {
     // only delete the blog if the condition returns true
     if (window.confirm(`Remove blog: ${blogToDelete.title}?`)) {
       try {
-        dispatch(deleteBlog(blogToDelete, token));
+        await dispatch(deleteBlog(blogToDelete, token));
         setNotification(
           `blog ${blogToDelete.title} was deleted successfully`,
           "setMessage",
@@ -107,7 +113,7 @@ const App = () => {
 
   const handleLikes = async (like) => {
     try {
-      dispatch(updateBlog(like, token));
+      await dispatch(updateBlog(like, token));
     } catch (err) {
       setNotification(`error updating the blog; ${err}`, "setMessage", 5);
     }
@@ -140,6 +146,8 @@ const App = () => {
               Logout
             </button>
           </p>
+          {isPending && <span>Loading...</span>}
+          {error && <span>Opps! {error.message}</span>}
           {blogs
             .slice()
             .sort((a, b) => b.likes - a.likes)

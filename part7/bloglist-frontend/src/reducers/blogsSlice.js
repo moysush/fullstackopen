@@ -24,31 +24,31 @@ const blogsSlice = createSlice({
 export const { getBlog, addBlog, removeBlog, updateLike } = blogsSlice.actions;
 
 export const fetchBlogs = () => {
-  return (dispatch) => {
-    blogService.getAll().then((data) => {
-      dispatch(getBlog(data));
-    });
+  return async (dispatch) => {
+    const data = await blogService.getAll();
+    dispatch(getBlog(data));
   };
 };
 
 export const createBlog = (blog, token, user) => {
-  return (dispatch) => {
-    blogService.create(blog, token).then((data) => {
-      dispatch(addBlog({ ...data, user }));
-    });
+  return async (dispatch) => {
+    const data = await blogService.create(blog, token);
+    dispatch(addBlog({ ...data, user }));
   };
 };
 
 export const deleteBlog = (blog, token) => {
-  return (dispatch) => {
+  return async (dispatch) => {
     // since backend does not return anything we need to pass the blog directly
-    blogService.remove(blog, token).then(() => dispatch(removeBlog(blog)));
+    await blogService.remove(blog, token);
+    dispatch(removeBlog(blog));
   };
 };
 
 export const updateBlog = (blog, token) => {
-  return (dispatch) => {
-    blogService.update(blog, token).then((data) => dispatch(updateLike(data)));
+  return async (dispatch) => {
+    const data = await blogService.update(blog, token);
+    dispatch(updateLike(data));
   };
 };
 
