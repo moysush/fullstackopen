@@ -6,7 +6,6 @@ import BlogForm from "./components/BlogForm.jsx";
 import Togglable from "./components/Togglable.jsx";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { setNotification } from "./reducers/notificationSlice.js";
 import {
   createBlog,
   deleteBlog,
@@ -14,15 +13,35 @@ import {
   updateBlog,
 } from "./reducers/blogsSlice.js";
 import { logout, setToken, setUser } from "./reducers/loginSlice.js";
+import { useReducer } from "react";
+import Notification from "./components/Notification.jsx";
+import { NotificationContext } from "./NotificationContext.js";
+
+function notifReducer(state, action) {
+  if (action.type === "setMessage") {
+    return action.payload;
+  } else if (action.type === "clear") {
+    return null;
+  }
+  throw Error("Unknown action.");
+}
 
 const App = () => {
   const blogs = useSelector((state) => state.blogs);
   const user = useSelector((state) => state.login.user);
   const token = useSelector((state) => state.login.token);
+  const [notification, notifDispatch] = useReducer(notifReducer, null);
   const blogFormRef = useRef();
 
-  const notification = useSelector((state) => state.notification);
   const dispatch = useDispatch();
+
+  // clean function for the notification setting with timeout
+  const setNotification = (state, action, seconds = 5) => {
+    notifDispatch({ type: `${action}`, payload: state });
+    setTimeout(() => {
+      notifDispatch({ type: "clear", payload: null });
+    }, seconds * 1000);
+  };
 
   useEffect(() => {
     dispatch(fetchBlogs());
@@ -47,9 +66,12 @@ const App = () => {
       );
       dispatch(setUser(loggedUser));
       dispatch(setToken(loggedUser.token));
-      dispatch(setNotification(`${loggedUser.name} successfully logged in`, 5));
+      setNotification(
+        `${loggedUser.name} successfully logged in`,
+        "setMessage",
+      );
     } catch (err) {
-      dispatch(setNotification(`invalid username or password; ${err}`, 5));
+      setNotification(`invalid username or password; ${err}`, "setMessage");
     }
   };
 
@@ -58,14 +80,12 @@ const App = () => {
     try {
       dispatch(createBlog(newBlog, token, user));
       blogFormRef.current.toggleVisibility();
-      dispatch(
-        setNotification(
-          `a new blog, ${newBlog.title} by ${newBlog.author} was added successfully`,
-          5,
-        ),
+      setNotification(
+        `a new blog, ${newBlog.title} by ${newBlog.author} was added successfully`,
+        "setMessage",
       );
     } catch (err) {
-      dispatch(setNotification(`error creating a new blog; ${err}`, 5));
+      setNotification(`error creating a new blog; ${err}`, "setMessage");
     }
   };
 
@@ -75,14 +95,12 @@ const App = () => {
     if (window.confirm(`Remove blog: ${blogToDelete.title}?`)) {
       try {
         dispatch(deleteBlog(blogToDelete, token));
-        dispatch(
-          setNotification(
-            `blog ${blogToDelete.title} was deleted successfully`,
-            5,
-          ),
+        setNotification(
+          `blog ${blogToDelete.title} was deleted successfully`,
+          "setMessage",
         );
       } catch (err) {
-        dispatch(setNotification(`blog could not be removed ${err}`, 5));
+        setNotification(`blog could not be removed ${err}`, "setMessage");
       }
     }
   };
@@ -91,27 +109,15 @@ const App = () => {
     try {
       dispatch(updateBlog(like, token));
     } catch (err) {
-      dispatch(setNotification(`error updating the blog; ${err}`, 5));
+      setNotification(`error updating the blog; ${err}`, "setMessage", 5);
     }
   };
 
-  const Notification = () => (
-    <div>
-      {notification && (
-        <div
-          className={
-            notification.includes("successfully") ? "success" : "error"
-          }
-        >
-          {notification}
-        </div>
-      )}
-    </div>
-  );
-
   return (
     <div>
-      <Notification />
+      <NotificationContext.Provider value={notification}>
+        <Notification />
+      </NotificationContext.Provider>
 
       <h2>Blogs</h2>
 
