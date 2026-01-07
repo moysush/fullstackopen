@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import Blog from "./components/Blog";
 import loginService from "./services/login";
 import LoginForm from "./components/LoginForm.jsx";
@@ -13,13 +13,13 @@ import {
   fetchBlogs,
   updateBlog,
 } from "./reducers/blogsSlice.js";
+import { logout, setToken, setUser } from "./reducers/loginSlice.js";
 
 const App = () => {
   const blogs = useSelector((state) => state.blogs);
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
+  const user = useSelector((state) => state.login.user);
+  const token = useSelector((state) => state.login.token);
   const blogFormRef = useRef();
-  console.log(blogs);
 
   const notification = useSelector((state) => state.notification);
   const dispatch = useDispatch();
@@ -32,10 +32,10 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
     if (loggedUserJSON) {
       const userData = JSON.parse(loggedUserJSON);
-      setUser(userData);
-      setToken(userData.token);
+      dispatch(setUser(userData));
+      dispatch(setToken(userData.token));
     }
-  }, []);
+  }, [dispatch]);
 
   // user login
   const handleLogin = async (userData) => {
@@ -45,8 +45,8 @@ const App = () => {
         "loggedBlogappUser",
         JSON.stringify(loggedUser),
       );
-      setUser(loggedUser);
-      setToken(loggedUser.token);
+      dispatch(setUser(loggedUser));
+      dispatch(setToken(loggedUser.token));
       dispatch(setNotification(`${loggedUser.name} successfully logged in`, 5));
     } catch (err) {
       dispatch(setNotification(`invalid username or password; ${err}`, 5));
@@ -75,8 +75,6 @@ const App = () => {
     if (window.confirm(`Remove blog: ${blogToDelete.title}?`)) {
       try {
         dispatch(deleteBlog(blogToDelete, token));
-        // setBlogs(blogs.filter((blog) => blog !== blogToDelete));
-        // dispatch(removeBlog(blogToDelete));
         dispatch(
           setNotification(
             `blog ${blogToDelete.title} was deleted successfully`,
@@ -129,9 +127,8 @@ const App = () => {
             {user.name} logged in{" "}
             <button
               onClick={() => {
-                setUser(window.localStorage.removeItem("loggedBlogappUser"));
-                setUser(null);
-                setToken(null);
+                window.localStorage.removeItem("loggedBlogappUser");
+                dispatch(logout());
               }}
             >
               Logout
