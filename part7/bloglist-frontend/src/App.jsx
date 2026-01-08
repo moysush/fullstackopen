@@ -46,11 +46,29 @@ const App = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["blogs"] });
     },
+    onError: (err) =>
+      setNotification(`error creating a new blog; ${err}`, "setMessage"),
   });
 
-  useEffect(() => {
-    dispatch(fetchBlogs());
-  }, [dispatch]);
+  // remove a blog
+  const deleteBlogMutation = useMutation({
+    mutationFn: (blog) => blogService.remove(blog, token),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["blogs"] });
+    },
+    onError: (err) =>
+      setNotification(`blog could not be removed ${err}`, "setMessage"),
+  });
+
+  // mofigy a blog with like
+  const likeBlogMutation = useMutation({
+    mutationFn: (blog) => blogService.update(blog, token),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["blogs"] });
+    },
+    onError: (err) =>
+      setNotification(`error updating the blog; ${err}`, "setMessage"),
+  });
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
@@ -80,43 +98,32 @@ const App = () => {
     }
   };
 
-  // new blog
+  // new blog button
   const handleCreate = async (newBlog) => {
-    try {
-      // await dispatch(createBlog(newBlog, token, user));
-      newBlogMutation.mutate(newBlog);
-      blogFormRef.current.toggleVisibility();
-      setNotification(
-        `a new blog, ${newBlog.title} by ${newBlog.author} was added successfully`,
-        "setMessage",
-      );
-    } catch (err) {
-      setNotification(`error creating a new blog; ${err}`, "setMessage");
-    }
+    newBlogMutation.mutate(newBlog);
+    blogFormRef.current.toggleVisibility();
+    setNotification(
+      `a new blog, ${newBlog.title} by ${newBlog.author} was added successfully`,
+      "setMessage",
+    );
   };
 
+  // delete blog button
   const handleDelete = async (e, blogToDelete) => {
     e.preventDefault();
     // only delete the blog if the condition returns true
     if (window.confirm(`Remove blog: ${blogToDelete.title}?`)) {
-      try {
-        await dispatch(deleteBlog(blogToDelete, token));
-        setNotification(
-          `blog ${blogToDelete.title} was deleted successfully`,
-          "setMessage",
-        );
-      } catch (err) {
-        setNotification(`blog could not be removed ${err}`, "setMessage");
-      }
+      deleteBlogMutation.mutate(blogToDelete);
+      setNotification(
+        `blog ${blogToDelete.title} was deleted successfully`,
+        "setMessage",
+      );
     }
   };
 
+  // update likes button
   const handleLikes = async (like) => {
-    try {
-      await dispatch(updateBlog(like, token));
-    } catch (err) {
-      setNotification(`error updating the blog; ${err}`, "setMessage", 5);
-    }
+    likeBlogMutation.mutate(like);
   };
 
   return (
