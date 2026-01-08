@@ -1,2 +1,2 @@
 # fullstackopen
-Submissions of the exercises from the Full Stack Open Course
+Submission repository for the Exercises from the Full Stack Open course.
