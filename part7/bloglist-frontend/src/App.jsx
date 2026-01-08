@@ -4,32 +4,22 @@ import loginService from "./services/login";
 import LoginForm from "./components/LoginForm.jsx";
 import BlogForm from "./components/BlogForm.jsx";
 import Togglable from "./components/Togglable.jsx";
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
-import { deleteBlog, fetchBlogs, updateBlog } from "./reducers/blogsSlice.js";
-import { logout, setToken, setUser } from "./reducers/loginSlice.js";
 import Notification from "./components/Notification.jsx";
 import { NotificationContext } from "./NotificationContext.js";
 import { useNotification } from "./hooks/useNotification.js";
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  QueryClient,
-  QueryClientProvider,
-} from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import blogService from "./services/blogs.js";
+import { useLogin } from "./hooks/useLogin.js";
 
 const App = () => {
-  // const blogs = useSelector((state) => state.blogs);
-  const user = useSelector((state) => state.login.user);
-  const token = useSelector((state) => state.login.token);
   const [notification, setNotification] = useNotification();
+  const [login, setLogin, setLogout] = useLogin();
   const blogFormRef = useRef();
-  const dispatch = useDispatch();
 
+  // initiate queryClient
   const queryClient = useQueryClient();
 
+  // fetchign the blogs
   const {
     data: blogs = [],
     isPending,
@@ -38,11 +28,10 @@ const App = () => {
     queryKey: ["blogs"],
     queryFn: () => blogService.getAll(),
   });
-  console.log(blogs);
 
-  // create new blog
+  // create new blog in the server
   const newBlogMutation = useMutation({
-    mutationFn: (newBlog) => blogService.create(newBlog, token),
+    mutationFn: (newBlog) => blogService.create(newBlog, login.token),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["blogs"] });
     },
@@ -50,9 +39,9 @@ const App = () => {
       setNotification(`error creating a new blog; ${err}`, "setMessage"),
   });
 
-  // remove a blog
+  // remove a blog from the server
   const deleteBlogMutation = useMutation({
-    mutationFn: (blog) => blogService.remove(blog, token),
+    mutationFn: (blog) => blogService.remove(blog, login.token),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["blogs"] });
     },
@@ -60,9 +49,9 @@ const App = () => {
       setNotification(`blog could not be removed ${err}`, "setMessage"),
   });
 
-  // mofigy a blog with like
+  // modify a blog with like in the server
   const likeBlogMutation = useMutation({
-    mutationFn: (blog) => blogService.update(blog, token),
+    mutationFn: (blog) => blogService.update(blog, login.token),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["blogs"] });
     },
@@ -70,16 +59,16 @@ const App = () => {
       setNotification(`error updating the blog; ${err}`, "setMessage"),
   });
 
+  // initial app loading
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
     if (loggedUserJSON) {
       const userData = JSON.parse(loggedUserJSON);
-      dispatch(setUser(userData));
-      dispatch(setToken(userData.token));
+      setLogin(userData);
     }
-  }, [dispatch]);
+  }, []);
 
-  // user login
+  // user login button
   const handleLogin = async (userData) => {
     try {
       const loggedUser = await loginService.login(userData);
@@ -87,8 +76,7 @@ const App = () => {
         "loggedBlogappUser",
         JSON.stringify(loggedUser),
       );
-      dispatch(setUser(loggedUser));
-      dispatch(setToken(loggedUser.token));
+      setLogin(loggedUser);
       setNotification(
         `${loggedUser.name} successfully logged in`,
         "setMessage",
@@ -96,6 +84,13 @@ const App = () => {
     } catch (err) {
       setNotification(`invalid username or password; ${err}`, "setMessage");
     }
+  };
+
+  // logout button
+  const handleLogout = () => {
+    window.localStorage.removeItem("loggedBlogappUser");
+    setLogout();
+    queryClient.clear();
   };
 
   // new blog button
@@ -134,24 +129,17 @@ const App = () => {
 
       <h2>Blogs</h2>
 
-      {!user && (
+      {!login.user && (
         <Togglable buttonLabel="Log In">
           <LoginForm userData={handleLogin} />
         </Togglable>
       )}
 
-      {user && (
+      {login.user && (
         <div id="blogs">
           <p>
-            {user.name} logged in{" "}
-            <button
-              onClick={() => {
-                window.localStorage.removeItem("loggedBlogappUser");
-                dispatch(logout());
-              }}
-            >
-              Logout
-            </button>
+            {login.user.name} logged in{" "}
+            <button onClick={handleLogout}>Logout</button>
           </p>
           {isPending && <span>Loading...</span>}
           {error && <span>Opps! {error.message}</span>}
@@ -164,7 +152,7 @@ const App = () => {
                 blog={blog}
                 handleDelete={handleDelete}
                 updatelikes={handleLikes}
-                currentUser={user}
+                currentUser={login.user}
               />
             ))}
           <Togglable buttonLabel="Create New Blog" ref={blogFormRef}>
