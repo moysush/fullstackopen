@@ -1,13 +1,14 @@
-table {
+/* table {
   border: 2px dashed;
   padding: 7px;
   border-radius: 15px;
   margin: 10px 0;
   font-size: 18px;
-}
+} */
 
-table th, td {
-  padding: 0 14px;
+table th,
+td {
+  padding: 0 25px 5px 0;
 }
 
 .error {
@@ -30,9 +31,9 @@ table th, td {
   margin: 10px 0;
 }
 
-/* li {
+li {
   list-style: none;
-} */
+}
 
 html {
   max-width: 70ch;
@@ -50,7 +51,7 @@ body {
   margin: 10px;
 }
 
-.blog {
+.dot {
   border-radius: 15px;
   border-style: dotted;
   border-width: 2px;

@@ -1,41 +1,49 @@
-import { useState } from "react";
+import { useSelector } from "react-redux";
+import { useParams } from "react-router";
 
-const Blog = ({ blog, handleDelete, updatelikes, currentUser }) => {
-  const [view, setView] = useState(false);
+export const Blog = ({ blog, handleDelete, updatelikes, currentUser }) => {
+  const blogs = useSelector((state) => state.blogs);
+  const { blogId } = useParams();
+  const blogDetails = blogs.find((blog) => blog.id === blogId);
 
+  // liking functionality
   const handleLikes = (e) => {
     e.preventDefault();
 
     updatelikes({
-      ...blog,
-      likes: blog.likes + 1,
+      ...blogDetails,
+      likes: blogDetails.likes + 1,
     });
-
-    // const handleDelete = (e) => {
-    //   e.preventDefault()
-    // }
   };
   return (
-    <div className="blog">
-      <div style={{ fontWeight: "bold" }}>
-        {blog.title} - {blog.author}{" "}
-        <button onClick={() => setView(!view)}>{view ? "Hide" : "View"}</button>
-      </div>
-      {view ? (
+    <div className="dot">
+      {!blogId ? (
+        // for initial blog names we need to prop blog from parents
         <div>
-          <div>{blog.url}</div>
-          <div>
-            Likes: {blog.likes} <button onClick={handleLikes}>Like</button>
+          {blog.title} - {blog.author}
+        </div>
+      ) : (
+        <div>
+          <div style={{ fontSize: "24px", margin: "0 0 6px 0" }}>
+            {blogDetails.title} - {blogDetails.author}
           </div>
-          <div>{blog.user.name}</div>
+          <div>{blogDetails.url}</div>
           <div>
-            {blog.user.name === currentUser?.name ? (
-              <button onClick={(e) => handleDelete(e, blog)}>Remove</button>
+            Likes: {blogDetails.likes}{" "}
+            <button onClick={handleLikes}>Like</button>
+          </div>
+          <div>{blogDetails.user.name}</div>
+          <div>
+            {blogDetails.user.name === currentUser?.name ? (
+              <button onClick={(e) => handleDelete(e, blogDetails)}>
+                Remove
+              </button>
             ) : null}
           </div>
         </div>
-      ) : null}
+      )}
     </div>
   );
 };
+
 export default Blog;

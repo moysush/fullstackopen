@@ -16,15 +16,17 @@ import {
 import { logout, setToken, setUser } from "./reducers/loginSlice.js";
 import { Routes } from "react-router";
 import { Route } from "react-router";
-import { UserDetails, UserList } from "./components/UserList.jsx";
+import { User, UserBlogs } from "./components/User.jsx";
+import { Link } from "react-router";
+import { useNavigate } from "react-router";
+import { Notification } from "./components/Notification.jsx";
 
 const App = () => {
   const blogs = useSelector((state) => state.blogs);
   const user = useSelector((state) => state.login.user);
   const token = useSelector((state) => state.login.token);
   const blogFormRef = useRef();
-
-  const notification = useSelector((state) => state.notification);
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -78,6 +80,7 @@ const App = () => {
     if (window.confirm(`Remove blog: ${blogToDelete.title}?`)) {
       try {
         dispatch(deleteBlog(blogToDelete, token));
+        navigate("/");
         dispatch(
           setNotification(
             `blog ${blogToDelete.title} was deleted successfully`,
@@ -98,51 +101,44 @@ const App = () => {
     }
   };
 
-  const Notification = () => (
-    <div>
-      {notification && (
-        <div
-          className={
-            notification.includes("successfully") ? "success" : "error"
-          }
-        >
-          {notification}
-        </div>
-      )}
-    </div>
-  );
+  const Home = () => {
+    return (
+      <div>
+        <Notification />
 
-  const Home = () => (
-    <div>
-      <Notification />
-
-      {!user && (
-        <Togglable buttonLabel="Log In">
-          <LoginForm userData={handleLogin} />
-        </Togglable>
-      )}
-
-      {user && (
-        <div id="blogs">
-          {blogs
-            .slice()
-            .sort((a, b) => b.likes - a.likes)
-            .map((blog) => (
-              <Blog
-                key={blog.id}
-                blog={blog}
-                handleDelete={handleDelete}
-                updatelikes={handleLikes}
-                currentUser={user}
-              />
-            ))}
-          <Togglable buttonLabel="Create New Blog" ref={blogFormRef}>
-            <BlogForm newBlog={handleCreate} />
+        {!user && (
+          <Togglable buttonLabel="Log In">
+            <LoginForm userData={handleLogin} />
           </Togglable>
-        </div>
-      )}
-    </div>
-  );
+        )}
+
+        {user && (
+          <div id="blogs">
+            {blogs
+              .slice()
+              .sort((a, b) => b.likes - a.likes)
+              .map((blog) => (
+                <Link
+                  key={blog.id}
+                  to={`/blogs/${blog.id}`}
+                  style={{ textDecoration: "none", color: "indigo" }}
+                >
+                  <Blog
+                    blog={blog}
+                    handleDelete={handleDelete}
+                    updatelikes={handleLikes}
+                    currentUser={user}
+                  />
+                </Link>
+              ))}
+            <Togglable buttonLabel="Create New Blog" ref={blogFormRef}>
+              <BlogForm newBlog={handleCreate} />
+            </Togglable>
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div>
@@ -163,8 +159,19 @@ const App = () => {
       )}
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="users" element={<UserList />} />
-        <Route path="users/:userId" element={<UserDetails />} />
+        <Route path="blogs" element={<Home />} />
+        <Route path="users" element={<User />} />
+        <Route path="users/:userId" element={<UserBlogs />} />
+        <Route
+          path="blogs/:blogId"
+          element={
+            <Blog
+              handleDelete={handleDelete}
+              updatelikes={handleLikes}
+              currentUser={user}
+            />
+          }
+        />
       </Routes>
     </div>
   );

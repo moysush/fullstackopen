@@ -5,7 +5,7 @@ import { fetchUsers } from "../reducers/userSlice";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 
-export const UserDetails = () => {
+export const UserBlogs = () => {
   // all the users from the redux store for comparison
   const users = useSelector((state) => state.users);
   // user id from the url
@@ -21,16 +21,18 @@ export const UserDetails = () => {
     <div>
       <h2>{user.name}</h2>
       <h4>Added blogs:</h4>
-      <ul>
-        {user.blogs.map((blog) => {
-          return <li key={blog.id}>{blog.title}</li>;
-        })}
-      </ul>
+      {user.blogs.map((blog) => {
+        return (
+          <li className="dot" key={blog.id}>
+            {blog.title}
+          </li>
+        );
+      })}
     </div>
   );
 };
 
-export const UserList = () => {
+export const User = () => {
   const dispatch = useDispatch();
   const users = useSelector((state) => state.users);
 
@@ -55,10 +57,10 @@ export const UserList = () => {
         <tbody>
           {users.map((user) => (
             <tr key={user.id}>
-              <td>
+              <td className="dot">
                 <Link to={`/users/${user.id}`}>{user.name}</Link>
               </td>
-              <td>{user.blogs.length}</td>
+              <td className="dot">{user.blogs.length}</td>
             </tr>
           ))}
         </tbody>
