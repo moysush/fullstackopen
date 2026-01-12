@@ -16,14 +16,13 @@ import {
 import { logout, setToken, setUser } from "./reducers/loginSlice.js";
 import { Routes } from "react-router";
 import { Route } from "react-router";
-import { UserList } from "./components/UserList.jsx";
+import { UserDetails, UserList } from "./components/UserList.jsx";
 
 const App = () => {
   const blogs = useSelector((state) => state.blogs);
   const user = useSelector((state) => state.login.user);
   const token = useSelector((state) => state.login.token);
   const blogFormRef = useRef();
-  console.log(blogs);
 
   const notification = useSelector((state) => state.notification);
   const dispatch = useDispatch();
@@ -113,57 +112,59 @@ const App = () => {
     </div>
   );
 
+  const Home = () => (
+    <div>
+      <Notification />
+
+      {!user && (
+        <Togglable buttonLabel="Log In">
+          <LoginForm userData={handleLogin} />
+        </Togglable>
+      )}
+
+      {user && (
+        <div id="blogs">
+          {blogs
+            .slice()
+            .sort((a, b) => b.likes - a.likes)
+            .map((blog) => (
+              <Blog
+                key={blog.id}
+                blog={blog}
+                handleDelete={handleDelete}
+                updatelikes={handleLikes}
+                currentUser={user}
+              />
+            ))}
+          <Togglable buttonLabel="Create New Blog" ref={blogFormRef}>
+            <BlogForm newBlog={handleCreate} />
+          </Togglable>
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <div>
+      <h2>Blogs</h2>
+      {user && (
+        <p>
+          {" "}
+          {user.name} logged in{" "}
+          <button
+            onClick={() => {
+              window.localStorage.removeItem("loggedBlogappUser");
+              dispatch(logout());
+            }}
+          >
+            Logout
+          </button>
+        </p>
+      )}
       <Routes>
-        <Route path="/users" element={<UserList />} />
-        <Route
-          path="/"
-          element={
-            <div>
-              <Notification />
-
-              <h2>Blogs</h2>
-
-              {!user && (
-                <Togglable buttonLabel="Log In">
-                  <LoginForm userData={handleLogin} />
-                </Togglable>
-              )}
-
-              {user && (
-                <div id="blogs">
-                  <p>
-                    {user.name} logged in{" "}
-                    <button
-                      onClick={() => {
-                        window.localStorage.removeItem("loggedBlogappUser");
-                        dispatch(logout());
-                      }}
-                    >
-                      Logout
-                    </button>
-                  </p>
-                  {blogs
-                    .slice()
-                    .sort((a, b) => b.likes - a.likes)
-                    .map((blog) => (
-                      <Blog
-                        key={blog.id}
-                        blog={blog}
-                        handleDelete={handleDelete}
-                        updatelikes={handleLikes}
-                        currentUser={user}
-                      />
-                    ))}
-                  <Togglable buttonLabel="Create New Blog" ref={blogFormRef}>
-                    <BlogForm newBlog={handleCreate} />
-                  </Togglable>
-                </div>
-              )}
-            </div>
-          }
-        />
+        <Route path="/" element={<Home />} />
+        <Route path="users" element={<UserList />} />
+        <Route path="users/:userId" element={<UserDetails />} />
       </Routes>
     </div>
   );
