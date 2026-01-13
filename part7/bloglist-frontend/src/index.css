@@ -14,21 +14,21 @@ td {
 .error {
   color: red;
   background: #eee;
-  font-size: 20px;
-  border-style: solid;
-  border-radius: 7px;
-  padding: 10px;
-  margin: 25px 0 0;
+  border-radius: 15px;
+  border-style: dotted;
+  padding: 7px;
+  margin: 10px 0;
+  font-size: 18px;
 }
 
 .success {
   color: green;
   background: #eee;
-  font-size: 20px;
-  border-style: solid;
-  border-radius: 7px;
-  padding: 10px;
+  border-radius: 15px;
+  border-style: dotted;
+  padding: 7px;
   margin: 10px 0;
+  font-size: 18px;
 }
 
 li {

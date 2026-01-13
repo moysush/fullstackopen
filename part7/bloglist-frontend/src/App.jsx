@@ -20,6 +20,7 @@ import { User, UserBlogs } from "./components/User.jsx";
 import { Link } from "react-router";
 import { useNavigate } from "react-router";
 import { Notification } from "./components/Notification.jsx";
+import { NavLink } from "react-router";
 
 const App = () => {
   const blogs = useSelector((state) => state.blogs);
@@ -61,7 +62,7 @@ const App = () => {
   // new blog
   const handleCreate = async (newBlog) => {
     try {
-      dispatch(createBlog(newBlog, token, user));
+      await dispatch(createBlog(newBlog, token, user));
       blogFormRef.current.toggleVisibility();
       dispatch(
         setNotification(
@@ -80,15 +81,15 @@ const App = () => {
     if (window.confirm(`Remove blog: ${blogToDelete.title}?`)) {
       try {
         dispatch(deleteBlog(blogToDelete, token));
-        navigate("/");
         dispatch(
           setNotification(
             `blog ${blogToDelete.title} was deleted successfully`,
             5,
           ),
         );
+        navigate("/");
       } catch (err) {
-        dispatch(setNotification(`blog could not be removed ${err}`, 5));
+        dispatch(setNotification(`blog could not be removed; ${err}`, 5));
       }
     }
   };
@@ -104,8 +105,6 @@ const App = () => {
   const Home = () => {
     return (
       <div>
-        <Notification />
-
         {!user && (
           <Togglable buttonLabel="Log In">
             <LoginForm userData={handleLogin} />
@@ -142,10 +141,10 @@ const App = () => {
 
   return (
     <div>
-      <h2>Blogs</h2>
       {user && (
-        <p>
-          {" "}
+        <nav className="dot" style={{ backgroundColor: "#eee" }}>
+          <NavLink to="/blogs">Blogs </NavLink>
+          <NavLink to="/users">Users </NavLink>
           {user.name} logged in{" "}
           <button
             onClick={() => {
@@ -155,8 +154,11 @@ const App = () => {
           >
             Logout
           </button>
-        </p>
+        </nav>
       )}
+      <Notification />
+      <h2>Blogs</h2>
+
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="blogs" element={<Home />} />
