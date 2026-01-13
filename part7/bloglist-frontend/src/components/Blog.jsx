@@ -1,10 +1,17 @@
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router";
 import { useParams } from "react-router";
 
 export const Blog = ({ blog, handleDelete, updatelikes, currentUser }) => {
   const blogs = useSelector((state) => state.blogs);
   const { blogId } = useParams();
   const blogDetails = blogs.find((blog) => blog.id === blogId);
+  const navigate = useNavigate();
+
+  // if (!blogDetails) {
+  //   navigate("/blogs");
+  //   return null;
+  // }
 
   // liking functionality
   const handleLikes = (e) => {
