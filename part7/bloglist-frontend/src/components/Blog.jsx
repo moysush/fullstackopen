@@ -1,19 +1,12 @@
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router";
 import { useParams } from "react-router";
 
 export const Blog = ({ blog, handleDelete, updatelikes, currentUser }) => {
   const blogs = useSelector((state) => state.blogs);
   const { blogId } = useParams();
   const blogDetails = blogs.find((blog) => blog.id === blogId);
-  const navigate = useNavigate();
+  // console.log(blogDetails);
 
-  // if (!blogDetails) {
-  //   navigate("/blogs");
-  //   return null;
-  // }
-
-  // liking functionality
   const handleLikes = (e) => {
     e.preventDefault();
 
@@ -31,7 +24,13 @@ export const Blog = ({ blog, handleDelete, updatelikes, currentUser }) => {
         </div>
       ) : (
         <div>
-          <div style={{ fontSize: "24px", margin: "0 0 6px 0" }}>
+          <div
+            style={{
+              fontSize: "20px",
+              margin: "0 0 6px 0",
+              fontWeight: "bold",
+            }}
+          >
             {blogDetails.title} - {blogDetails.author}
           </div>
           <div>{blogDetails.url}</div>
@@ -46,6 +45,23 @@ export const Blog = ({ blog, handleDelete, updatelikes, currentUser }) => {
                 Remove
               </button>
             ) : null}
+          </div>
+          <div>
+            <h4>Comments</h4>
+            {blogDetails.comments.length === 0 ? (
+              <p>There are no comments yet...</p>
+            ) : (
+              <ul>
+                {blogDetails.comments.map((comment) => {
+                  return (
+                    <li key={comment} style={{ listStyle: "disc" }}>
+                      {comment}
+                    </li>
+                  );
+                })}
+                <li></li>
+              </ul>
+            )}
           </div>
         </div>
       )}
