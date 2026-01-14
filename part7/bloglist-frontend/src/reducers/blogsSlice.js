@@ -18,10 +18,15 @@ const blogsSlice = createSlice({
           : blog,
       );
     },
+    updateComment: (state, action) =>
+      state.map((blog) =>
+        blog.id === action.payload.id ? { ...action.payload } : blog,
+      ),
   },
 });
 
-export const { getBlog, addBlog, removeBlog, updateLike } = blogsSlice.actions;
+export const { getBlog, addBlog, removeBlog, updateLike, updateComment } =
+  blogsSlice.actions;
 
 export const fetchBlogs = () => {
   return (dispatch) => {
@@ -39,16 +44,29 @@ export const createBlog = (blog, token, user) => {
   };
 };
 
+export const addCommentToBlog = (blogId, comment) => {
+  return (dispatch) => {
+    return blogService
+      .createComment(blogId, { comment: comment })
+      .then((data) => dispatch(updateComment(data)));
+    // server sends back the whole blog with comments thats why we can dispatch data as a whole
+  };
+};
+
 export const deleteBlog = (blog, token) => {
   return (dispatch) => {
     // since backend does not return anything we need to pass the blog directly
-    return blogService.remove(blog, token).then(() => dispatch(removeBlog(blog)));
+    return blogService
+      .remove(blog, token)
+      .then(() => dispatch(removeBlog(blog)));
   };
 };
 
 export const updateBlog = (blog, token) => {
   return (dispatch) => {
-    return blogService.update(blog, token).then((data) => dispatch(updateLike(data)));
+    return blogService
+      .update(blog, token)
+      .then((data) => dispatch(updateLike(data)));
   };
 };
 

@@ -13,7 +13,7 @@ blogsRouter.get("/", async (request, response) => {
   response.json(res);
 });
 
-// individual ids
+// individual ids (not used in the frontend, handled with react router instead)
 blogsRouter.get("/:id", async (request, response) => {
   const blog = await Blog.findById(request.params.id);
   if (blog) {
