@@ -1,8 +1,5 @@
-import { useEffect } from "react";
 import { Link } from "react-router";
 import { useParams } from "react-router";
-import { fetchUsers } from "../reducers/userSlice";
-import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 
 export const UserBlogs = () => {
@@ -11,13 +8,13 @@ export const UserBlogs = () => {
   // user id from the url
   const { userId } = useParams();
   // finding the user
-  const user = users?.find((user) => user.id === userId.toString());
+  const user = users?.find((user) => user.id === userId);
 
   if (!user) {
     return "User not found";
   }
 
-  return (
+  return user ? (
     <div>
       <h2>{user.name}</h2>
       <h4>Added blogs:</h4>
@@ -29,16 +26,11 @@ export const UserBlogs = () => {
         );
       })}
     </div>
-  );
+  ) : null;
 };
 
 export const User = () => {
-  const dispatch = useDispatch();
   const users = useSelector((state) => state.users);
-
-  useEffect(() => {
-    dispatch(fetchUsers());
-  }, [dispatch]);
 
   if (!users) {
     return <div>Loading...</div>;

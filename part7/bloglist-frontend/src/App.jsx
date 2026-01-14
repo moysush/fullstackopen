@@ -21,6 +21,7 @@ import { Link } from "react-router";
 import { useNavigate } from "react-router";
 import { Notification } from "./components/Notification.jsx";
 import { NavLink } from "react-router";
+import { fetchUsers } from "./reducers/userSlice.js";
 
 const App = () => {
   const blogs = useSelector((state) => state.blogs);
@@ -32,6 +33,7 @@ const App = () => {
 
   useEffect(() => {
     dispatch(fetchBlogs());
+    dispatch(fetchUsers());
   }, [dispatch]);
 
   useEffect(() => {
