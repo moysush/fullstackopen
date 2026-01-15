@@ -27,23 +27,20 @@ export const Blog = ({ blog, handleDelete, updatelikes, currentUser }) => {
     setComment("");
   };
   return (
-    <div className="dot">
+    <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-5 mb-4 transition-all hover:shadow-md hover:border-violet-200 group">
       {!blogId ? (
         // for initial blog names we need to prop blog from parents
-        <div>
+        <div className="flex justify-between items-start">
           {/* only printing the names */}
-          {blog.title} - {blog.author}
+          <h3 className="text-lg font-bold text-slate-600 group-hover:text-violet-500 transition-colors">
+            {blog.title}
+          </h3>
+          <p className="text-sm text-slate-400 italic">{blog.author}</p>
         </div>
       ) : blogDetails ? (
         // only show the blog details if blogDetails exist
         <div>
-          <div
-            style={{
-              fontSize: "20px",
-              margin: "0 0 6px 0",
-              fontWeight: "bold",
-            }}
-          >
+          <div>
             {blogDetails.title} - {blogDetails.author}
           </div>
           <div>{blogDetails.url}</div>

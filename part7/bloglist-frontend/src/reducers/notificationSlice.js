@@ -14,7 +14,7 @@ export const notificationSlice = createSlice({
 
 // thunk for clean codes
 // dispatch still needs to be sent for setNotification
-export const setNotification = (text, seconds) => {
+export const setNotification = (text, seconds = 3) => {
     return (dispatch) => {
         dispatch(setMessage(text))
 

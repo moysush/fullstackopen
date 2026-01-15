@@ -48,7 +48,12 @@ const BlogForm = ({ newBlog }) => {
           />
         </label>
       </div>
-      <button onClick={handleCreate}>Create</button>
+      <button
+        className="mx-auto block text-lg bg-violet-600/80 hover:bg-violet-700 text-white font-bold px-8 py-4 rounded-full shadow-2xl shadow-violet-300 transition-all hover:scale-105 active:scale-95 flex items-center gap-2 whitespace-nowrap backdrop-blur-md"
+        onClick={handleCreate}
+      >
+        Create
+      </button>
     </div>
   );
 };

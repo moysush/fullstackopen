@@ -14,8 +14,8 @@ export const userSlice = createSlice({
 export const { getUsers } = userSlice.actions;
 
 export const fetchUsers = () => async (dispatch) => {
-    const users = await userService.getAll()
-    dispatch(getUsers(users))
-}
+  const users = await userService.getAll();
+  dispatch(getUsers(users));
+};
 
-export default userSlice.reducer
+export default userSlice.reducer;
