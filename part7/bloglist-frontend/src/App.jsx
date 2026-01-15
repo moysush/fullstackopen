@@ -55,10 +55,17 @@ const App = () => {
       );
       dispatch(setUser(loggedUser));
       dispatch(setToken(loggedUser.token));
-      dispatch(setNotification(`${loggedUser.name} successfully logged in`, 5));
+      dispatch(setNotification(`${loggedUser.name} successfully logged in`));
     } catch (err) {
-      dispatch(setNotification(`invalid username or password; ${err}`, 5));
+      dispatch(setNotification(`invalid username or password; ${err}`));
     }
+  };
+
+  const handleLogout = () => {
+    window.localStorage.removeItem("loggedBlogappUser");
+    dispatch(logout());
+    navigate("/");
+    dispatch(setNotification(`${user.name} logged out successfully`));
   };
 
   // new blog
@@ -69,11 +76,10 @@ const App = () => {
       dispatch(
         setNotification(
           `a new blog, ${newBlog.title} by ${newBlog.author} was added successfully`,
-          5,
         ),
       );
     } catch (err) {
-      dispatch(setNotification(`error creating a new blog; ${err}`, 5));
+      dispatch(setNotification(`error creating a new blog; ${err}`));
     }
   };
 
@@ -86,12 +92,11 @@ const App = () => {
         dispatch(
           setNotification(
             `blog ${blogToDelete.title} was deleted successfully`,
-            5,
           ),
         );
         navigate("/");
       } catch (err) {
-        dispatch(setNotification(`blog could not be removed; ${err}`, 5));
+        dispatch(setNotification(`blog could not be removed; ${err}`));
       }
     }
   };
@@ -100,15 +105,15 @@ const App = () => {
     try {
       dispatch(updateBlog(like, token));
     } catch (err) {
-      dispatch(setNotification(`error updating the blog; ${err}`, 5));
+      dispatch(setNotification(`error updating the blog; ${err}`));
     }
   };
 
   const Home = () => {
     return (
-      <div>
+      <div className="max-w-4xl mx-auto py-8 px-4">
         {!user && (
-          <Togglable buttonLabel="Log In">
+          <Togglable buttonLabel="Log in">
             <LoginForm userData={handleLogin} />
           </Togglable>
         )}
@@ -129,10 +134,11 @@ const App = () => {
                     handleDelete={handleDelete}
                     updatelikes={handleLikes}
                     currentUser={user}
+                    className=""
                   />
                 </Link>
               ))}
-            <Togglable buttonLabel="Create New Blog" ref={blogFormRef}>
+            <Togglable buttonLabel="+ Create new blog" ref={blogFormRef}>
               <BlogForm newBlog={handleCreate} />
             </Togglable>
           </div>
@@ -144,23 +150,57 @@ const App = () => {
   return (
     <div>
       {user && (
-        <nav className="dot" style={{ backgroundColor: "#eee" }}>
-          <NavLink to="/blogs">Blogs </NavLink>
-          <NavLink to="/users">Users </NavLink>
-          {user.name} logged in{" "}
-          <button
-            onClick={() => {
-              window.localStorage.removeItem("loggedBlogappUser");
-              dispatch(logout());
-            }}
-          >
-            Logout
-          </button>
+        <nav className="flex justify-between items-center border-b border-slate-100 px-6 py-4 bg-white/10 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+          {/* left side */}
+          <div className="flex items-center space-x-8">
+            <h1 className="text-2xl font-black text-violet-600 cursor-pointer tracking-tighter">
+              BlogApp
+            </h1>
+            <div className="hidden md:flex space-x-4 text-lg flex gap-2">
+              <NavLink
+                to="/blogs"
+                className="text-slate-600 hover:text-violet-500 font-medium transition-colors"
+              >
+                Blogs
+              </NavLink>
+              <NavLink
+                to="/users"
+                className="text-slate-600 hover:text-violet-500 font-medium transition-colors"
+              >
+                Users
+              </NavLink>
+            </div>
+          </div>
+          {/* right side */}
+          <div className="flex items-center space-x-4 bg-slate-200 px-3 py-1.5 rounded-full border border-slate-100">
+            <span className="text-sm text-slate-700 font-semibold hover:text-violet-500">
+              {user.name}
+            </span>
+            <button
+              onClick={handleLogout}
+              className="text-slate-600 hover:text-red-600 transition-colors p-1 cursor-pointer"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-5 h-5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15"
+                />
+              </svg>
+            </button>
+          </div>
+          {/* </div> */}
         </nav>
       )}
       <Notification />
-      <h2>Blogs</h2>
-
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="blogs" element={<Home />} />
