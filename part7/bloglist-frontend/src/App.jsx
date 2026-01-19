@@ -22,6 +22,9 @@ import { useNavigate } from "react-router";
 import { Notification } from "./components/Notification.jsx";
 import { NavLink } from "react-router";
 import { fetchUsers } from "./reducers/userSlice.js";
+import { LogOut } from "lucide-react";
+import { CircleUserRound } from "lucide-react";
+import { getInitial } from "./helper/initial.js";
 
 const App = () => {
   const blogs = useSelector((state) => state.blogs);
@@ -72,7 +75,6 @@ const App = () => {
   const handleCreate = async (newBlog) => {
     try {
       await dispatch(createBlog(newBlog, token, user));
-      blogFormRef.current.toggleVisibility();
       dispatch(
         setNotification(
           `a new blog, ${newBlog.title} by ${newBlog.author} was added successfully`,
@@ -111,7 +113,7 @@ const App = () => {
 
   const Home = () => {
     return (
-      <div className="max-w-4xl mx-auto py-8 px-4">
+      <div className="max-w-4xl mt-14 mx-auto py-8 px-4">
         {!user && (
           <Togglable buttonLabel="Log in">
             <LoginForm userData={handleLogin} />
@@ -119,7 +121,10 @@ const App = () => {
         )}
 
         {user && (
-          <div id="blogs">
+          <div
+            id="blogs"
+            className="flex w-full flex-wrap mx-auto justify-center"
+          >
             {blogs
               .slice()
               .sort((a, b) => b.likes - a.likes)
@@ -138,8 +143,11 @@ const App = () => {
                   />
                 </Link>
               ))}
-            <Togglable buttonLabel="+ Create new blog" ref={blogFormRef}>
-              <BlogForm newBlog={handleCreate} />
+            <Togglable buttonLabel="+ Create New" ref={blogFormRef}>
+              <BlogForm
+                newBlog={handleCreate}
+                toggleVisibility={() => blogFormRef.current.toggleVisibility()}
+              />
             </Togglable>
           </div>
         )}
@@ -148,53 +156,45 @@ const App = () => {
   };
 
   return (
-    <div>
+    <div className="">
       {user && (
         <nav className="flex justify-between items-center border-b border-slate-100 px-6 py-4 bg-white/10 backdrop-blur-md sticky top-0 z-50 shadow-sm">
           {/* left side */}
-          <div className="flex items-center space-x-8">
-            <h1 className="text-2xl font-black text-violet-600 cursor-pointer tracking-tighter">
+          <div className="flex items-center space-x-6">
+            <Link
+              to="/"
+              className="text-2xl font-black text-violet-600 cursor-pointer tracking-tighter"
+            >
               BlogApp
-            </h1>
-            <div className="hidden md:flex space-x-4 text-lg flex gap-2">
+            </Link>
+            <div className="flex space-x-1 text-lg flex gap-2">
               <NavLink
                 to="/blogs"
-                className="text-slate-600 hover:text-violet-500 font-medium transition-colors"
+                className="font-semibold tracking-tighter text-slate-600 hover:text-violet-500 font-medium transition-colors"
               >
                 Blogs
               </NavLink>
               <NavLink
                 to="/users"
-                className="text-slate-600 hover:text-violet-500 font-medium transition-colors"
+                className="font-semibold tracking-tighter text-slate-600 hover:text-violet-500 font-medium transition-colors"
               >
                 Users
               </NavLink>
             </div>
           </div>
           {/* right side */}
-          <div className="flex items-center space-x-4 bg-slate-200 px-3 py-1.5 rounded-full border border-slate-100">
-            <span className="text-sm text-slate-700 font-semibold hover:text-violet-500">
-              {user.name}
+          <div className="flex items-center space-x-2 bg-slate-200/80 px-3 py-1.5 rounded-full border border-slate-100">
+            <span className="flex justify-center items-center gap-1 text-sm text-slate-700 font-semibold hover:text-violet-500">
+              <span className="bg-violet-300 h-7 w-7 flex items-center justify-center rounded-full border border-white shadow-sm">
+                {getInitial(user.name)}
+              </span>
+              <span className="hidden md:block">{user.name}</span>
             </span>
             <button
               onClick={handleLogout}
-              className="text-slate-600 hover:text-red-600 transition-colors p-1 cursor-pointer"
+              className="text-slate-600 hover:text-red-600 transition-colors cursor-pointer"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-5 h-5"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15"
-                />
-              </svg>
+              <LogOut size={22} />
             </button>
           </div>
           {/* </div> */}
