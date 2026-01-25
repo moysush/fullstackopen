@@ -33,31 +33,39 @@ const PersonForm = ({ setError }) => {
 
   return (
     <form onSubmit={submit}>
-      <input
-        name="name"
-        value={form.name}
-        onChange={handleChange}
-        placeholder="name"
-      />
-      <input
-        name="street"
-        value={form.street}
-        onChange={handleChange}
-        placeholder="street"
-      />
-      <input
-        name="city"
-        value={form.city}
-        onChange={handleChange}
-        placeholder="city"
-      />
-      <input
-        name="phone"
-        value={form.phone}
-        onChange={handleChange}
-        placeholder="phone"
-      />
-      <button type="submit">add!</button>
+      <div>
+        <input
+          name="name"
+          value={form.name}
+          onChange={handleChange}
+          placeholder="name"
+        />
+      </div>
+      <div>
+        <input
+          name="street"
+          value={form.street}
+          onChange={handleChange}
+          placeholder="street"
+        />
+      </div>
+      <div>
+        <input
+          name="city"
+          value={form.city}
+          onChange={handleChange}
+          placeholder="city"
+        />
+      </div>
+      <div>
+        <input
+          name="phone"
+          value={form.phone}
+          onChange={handleChange}
+          placeholder="phone"
+        />
+      </div>
+      <button type="submit">Add</button>
     </form>
   );
 };
