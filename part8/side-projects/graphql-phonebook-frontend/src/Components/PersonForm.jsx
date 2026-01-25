@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useMutation } from "@apollo/client/react";
 import { CREATE_PERSON, ALL_PERSONS } from "../queries";
 
-const PersonForm = () => {
+const PersonForm = ({ setError }) => {
   const [form, setForm] = useState({
     name: "",
     street: "",
@@ -12,6 +12,7 @@ const PersonForm = () => {
 
   const [savePerson] = useMutation(CREATE_PERSON, {
     refetchQueries: [{ query: ALL_PERSONS }],
+    onError: (error) => setError(error.message),
   });
 
   const handleChange = (e) => {
