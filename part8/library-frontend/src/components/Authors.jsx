@@ -1,5 +1,5 @@
 import { useQuery } from "@apollo/client/react";
-import { ALL_AUTHORS, EDIT_AUTHOR } from "../query";
+import { ALL_AUTHORS, EDIT_AUTHOR } from "../queries";
 import { useState } from "react";
 import { useMutation } from "@apollo/client/react";
 
@@ -47,16 +47,18 @@ const Authors = (props) => {
       <h2>Set Birth Year</h2>
       <form onSubmit={submit}>
         <div>
-          <select name="name">
+          <select
+            name="selectedName"
+            value={form.name}
+            // the target.value gets the value from the option value
+            onChange={({ target }) => {
+              setForm({ ...form, name: target.value });
+            }}
+          >
+            <option value="">Select an author</option>
             {data.allAuthors.map((a) => {
               return (
-                <option
-                  value={a.name}
-                  key={a.id}
-                  onClick={() => {
-                    setForm({ ...form, name: a.name });
-                  }}
-                >
+                <option value={a.name} key={a.id}>
                   {a.name}
                 </option>
               );
