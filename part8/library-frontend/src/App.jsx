@@ -2,9 +2,18 @@ import { useState } from "react";
 import Authors from "./components/Authors";
 import Books from "./components/Books";
 import NewBook from "./components/NewBook";
+import Notify from "./components/Notify";
 
 const App = () => {
   const [page, setPage] = useState("authors");
+  const [message, setMessage] = useState(null);
+
+  const setNotify = (message) => {
+    setMessage(message);
+    setTimeout(() => {
+      setMessage(null);
+    }, 5000);
+  };
 
   return (
     <div>
@@ -14,11 +23,11 @@ const App = () => {
         <button onClick={() => setPage("add")}>add book</button>
       </div>
 
-      <Authors show={page === "authors"} />
+      <Notify message={message} />
 
-      <Books show={page === "books"} />
-
-      <NewBook show={page === "add"} />
+      <Authors show={page === "authors"} setNotify={setNotify} />
+      <Books show={page === "books"} setNotify={setNotify} />
+      <NewBook show={page === "add"} setNotify={setNotify} />
     </div>
   );
 };
