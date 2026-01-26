@@ -1,5 +1,5 @@
 import { useQuery } from "@apollo/client/react";
-import { ALL_BOOKS } from "../query";
+import { ALL_BOOKS } from "../queries";
 
 const Books = (props) => {
   const { data, loading, error } = useQuery(ALL_BOOKS);
