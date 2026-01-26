@@ -55,6 +55,7 @@ const Authors = (props) => {
               setForm({ ...form, name: target.value });
             }}
           >
+            {/* initial option to show */}
             <option value="">Select an author</option>
             {data.allAuthors.map((a) => {
               return (
