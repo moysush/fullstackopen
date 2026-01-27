@@ -1,3 +1,4 @@
+// author: Author!  and  bookCount: Int need their own resolvers for Book and Author
 const typeDefs = /* GraphQL */ `
   type Book {
     title: String!
