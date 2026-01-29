@@ -6,16 +6,16 @@ const User = require("./models/user");
 const resolvers = {
   Query: {
     personCount: () => Person.collection.countDocuments(),
-    allPersons: (root, args) => {
+    allPersons: async (root, args) => {
       if (!args.phone) {
         // filters missing
-        return Person.find({});
+        return await Person.find({});
       }
       //   const byPhone = (p) => (args.phone === "YES" ? p.phone : !p.phone);
       //   return persons.filter(byPhone);
-      return Person.find({ phone: { $exists: args.phone === "YES" } });
+      return await Person.find({ phone: { $exists: args.phone === "YES" } });
     },
-    findPerson: (root, args) => Person.findOne({ name: args.name }),
+    findPerson: async (root, args) => await Person.findOne({ name: args.name }),
     me: (root, args, context) => {
       return context.currentUser;
     },
@@ -73,7 +73,7 @@ const resolvers = {
     },
 
     editNumber: async (root, args) => {
-      const person = persons.findOne({ name: args.name });
+      const person = await Person.findOne({ name: args.name });
       if (!person) {
         return null;
       }

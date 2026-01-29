@@ -9,7 +9,9 @@ const PhoneForm = ({ setError }) => {
       if (!data.editNumber) {
         setError("person not found");
       }
+      setForm({ name: "", phone: "" });
     },
+    onError: (error) => setError(error.message),
   });
 
   const submit = (e) => {
@@ -27,6 +29,7 @@ const PhoneForm = ({ setError }) => {
           <input
             type="text"
             name="name"
+            value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
             placeholder="name"
           />
@@ -35,6 +38,7 @@ const PhoneForm = ({ setError }) => {
           <input
             type="text"
             name="phone"
+            value={form.phone}
             onChange={(e) => setForm({ ...form, phone: e.target.value })}
             placeholder="phone"
           />
