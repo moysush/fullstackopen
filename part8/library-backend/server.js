@@ -5,6 +5,7 @@ const resolvers = require("./resolvers");
 const jwt = require("jsonwebtoken");
 const User = require("./models/user");
 
+// so that we can check if the user is authenticated
 const getUserFromAuthHeader = async (auth) => {
   if (!auth || !auth.startsWith("Bearer ")) {
     return null;
