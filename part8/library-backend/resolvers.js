@@ -1,6 +1,8 @@
 const Book = require("./models/book");
 const Author = require("./models/author");
+const User = require("./models/user");
 const { GraphQLError } = require("graphql");
+const jwt = require("jsonwebtoken");
 
 const resolvers = {
   Query: {
@@ -23,6 +25,7 @@ const resolvers = {
       return await Book.find(query);
     },
     allAuthors: async () => await Author.find({}),
+    me: (root, args, context) => context.currentUser,
   },
   // for each author
   // the root here is of Author
@@ -40,7 +43,15 @@ const resolvers = {
   },
 
   Mutation: {
-    addBook: async (root, args) => {
+    addBook: async (root, args, context) => {
+      if (!context.currentUser) {
+        throw new GraphQLError(`Not Authenticated`, {
+          extensions: {
+            code: "UNAUTHENTICATED",
+          },
+        });
+      }
+      
       let author = await Author.findOne({ name: args.author });
       if (!author) {
         author = new Author({ name: args.author });
@@ -72,13 +83,51 @@ const resolvers = {
         });
       });
     },
-    editAuthor: async (root, args) => {
+
+    editAuthor: async (root, args, context) => {
+      if (!context.currentUser) {
+        throw new GraphQLError(`Not Authenticated`, {
+          extensions: {
+            code: "UNAUTHENTICATED",
+          },
+        });
+      }
+
       const author = await Author.findOneAndUpdate(
         { name: args.name }, // filter
         { born: args.setBornTo }, // update
         { new: true }, // return the new updated data
       );
       return author;
+    },
+
+    createUser: async (root, args) => {
+      const user = new User({
+        ...args,
+      });
+
+      return await user.save();
+    },
+
+    login: async (root, args) => {
+      // try with await later
+      const user = await User.findOne({ username: args.username });
+
+      if (!user || args.password !== "secret") {
+        throw new GraphQLError(`Not authenticated`, {
+          extensions: {
+            code: "UNAUTHENTICATED",
+          },
+        });
+      }
+      const userForToken = {
+        username: user.username,
+        id: user._id,
+      };
+
+      // we are using the username and user id for for the token
+      const sign = jwt.sign(userForToken, process.env.JWT_SECRET);
+      return { value: sign };
     },
   },
 };
