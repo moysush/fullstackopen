@@ -22,7 +22,12 @@ const PersonForm = ({ setError }) => {
   const submit = (e) => {
     e.preventDefault(); // if not set, it removes the initial values with the page refresh
 
-    savePerson({ variables: { ...form } });
+    savePerson({
+      variables: {
+        ...form,
+        phone: form.phone.length < 0 ? form.phone : undefined,
+      },
+    });
     setForm({
       name: "",
       street: "",

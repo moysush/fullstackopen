@@ -14,11 +14,15 @@ function App() {
   const [errorMessage, setErrorMessage] = useState(null);
   const { data, loading } = useQuery(ALL_PERSONS);
   const client = useApolloClient();
+  const [currentUserName, setCurrentUserName] = useState(
+    localStorage.getItem("username"),
+  );
 
   if (loading) return "loading...";
 
   const onLogout = () => {
     setToken(null);
+    setCurrentUserName("");
     localStorage.clear();
     client.resetStore(); // resets the apollog client cache
   };
@@ -35,7 +39,11 @@ function App() {
       <div>
         <Notify errorMessage={errorMessage} />
         <h2>Login</h2>
-        <LoginForm setToken={setToken} setError={notify} />
+        <LoginForm
+          setToken={setToken}
+          setError={notify}
+          setCurrentUserName={setCurrentUserName}
+        />
       </div>
     );
   }
@@ -43,7 +51,10 @@ function App() {
   return (
     <>
       <Notify errorMessage={errorMessage} />
-      <button onClick={onLogout}>logout</button>
+      <div>
+        <span>{currentUserName} </span>
+        <button onClick={onLogout}>logout</button>
+      </div>
       <Persons persons={data.allPersons} />
       <PersonForm setError={notify} />
       <PhoneForm setError={notify} />

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useMutation } from "@apollo/client/react";
 import { LOGIN } from "../queries";
 
-const LoginForm = ({ setError, setToken }) => {
+const LoginForm = ({ setError, setToken, setCurrentUserName }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -11,13 +11,16 @@ const LoginForm = ({ setError, setToken }) => {
       const token = data.login.value;
       setToken(token);
       localStorage.setItem("phonebook-user-token", token);
+      // for current user name
+      setCurrentUserName(username);
+      localStorage.setItem("username", username);
     },
     onError: (error) => {
       setError(error.message);
     },
   });
 
-  const submit = (e) => {
+  const onSubmit = (e) => {
     e.preventDefault();
 
     login({ variables: { username, password } });
@@ -25,7 +28,7 @@ const LoginForm = ({ setError, setToken }) => {
 
   return (
     <div>
-      <form onSubmit={submit}>
+      <form onSubmit={onSubmit}>
         <div>
           <input
             type="text"
