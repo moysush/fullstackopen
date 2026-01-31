@@ -3,31 +3,24 @@ import { createRoot } from "react-dom/client";
 import App from "./App.jsx";
 import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
 import { ApolloProvider } from "@apollo/client/react";
+import { setContextLink } from "@apollo/client/link/context";
 
-const client = new ApolloClient({
-  link: new HttpLink({
-    uri: "http://localhost:4000",
-  }),
-  cache: new InMemoryCache(),
+const authLink = new setContextLink(({ headers }) => {
+  const token = localStorage.getItem("phonebook-user-token");
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : null,
+    },
+  };
 });
 
-// const query = gql`
-//   query {
-//     allPersons {
-//       name
-//       phone
-//       address {
-//         street
-//         city
-//       }
-//       id
-//     }
-//   }
-// `;
+const httpLink = new HttpLink({ uri: "http://localhost:4000" });
 
-// client.query({ query }).then((res) => {
-//   console.log(res);
-// });
+const client = new ApolloClient({
+  link: authLink.concat(httpLink),
+  cache: new InMemoryCache(),
+});
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
