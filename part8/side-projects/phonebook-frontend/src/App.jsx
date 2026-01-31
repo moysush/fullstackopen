@@ -1,16 +1,27 @@
-import { useQuery } from "@apollo/client/react";
+import { useQuery, useApolloClient } from "@apollo/client/react";
 import Persons from "./Components/Persons";
 import PersonForm from "./Components/PersonForm";
 import { ALL_PERSONS } from "./queries";
 import Notify from "./Components/Notify";
 import { useState } from "react";
 import PhoneForm from "./Components/PhoneForm";
+import LoginForm from "./Components/LoginForm";
 
 function App() {
+  const [token, setToken] = useState(
+    localStorage.getItem("phonebook-user-token"),
+  );
   const [errorMessage, setErrorMessage] = useState(null);
   const { data, loading } = useQuery(ALL_PERSONS);
+  const client = useApolloClient();
 
   if (loading) return "loading...";
+
+  const onLogout = () => {
+    setToken(null);
+    localStorage.clear();
+    client.resetStore(); // resets the apollog client cache
+  };
 
   const notify = (message) => {
     setErrorMessage(message);
@@ -19,9 +30,20 @@ function App() {
     }, 10000);
   };
 
+  if (!token) {
+    return (
+      <div>
+        <Notify errorMessage={errorMessage} />
+        <h2>Login</h2>
+        <LoginForm setToken={setToken} setError={notify} />
+      </div>
+    );
+  }
+
   return (
     <>
       <Notify errorMessage={errorMessage} />
+      <button onClick={onLogout}>logout</button>
       <Persons persons={data.allPersons} />
       <PersonForm setError={notify} />
       <PhoneForm setError={notify} />
