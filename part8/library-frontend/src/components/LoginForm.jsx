@@ -2,13 +2,12 @@ import { useState } from "react";
 import { useMutation } from "@apollo/client/react";
 import { LOGIN } from "../queries";
 
-const LoginForm = ({ show, setNotify, setPage, setToken, setUserLogged }) => {
+const LoginForm = ({ show, setNotify, setPage, setUserLogged }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [login] = useMutation(LOGIN, {
     onCompleted: (data) => {
       const token = data.login.value;
-      setToken(token);
       setUserLogged(username);
       localStorage.setItem("library-user-token", token);
       localStorage.setItem("library-user", username);
@@ -35,6 +34,7 @@ const LoginForm = ({ show, setNotify, setPage, setToken, setUserLogged }) => {
 
   return (
     <div>
+      <h2>Login</h2>
       <form onSubmit={onSubmit}>
         <div>
           <input

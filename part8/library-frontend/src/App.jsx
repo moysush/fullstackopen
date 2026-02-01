@@ -5,12 +5,10 @@ import NewBook from "./components/NewBook";
 import Notify from "./components/Notify";
 import LoginForm from "./components/LoginForm";
 import { useApolloClient } from "@apollo/client/react";
+import Recommend from "./Recommend";
 const App = () => {
   const [page, setPage] = useState("authors");
   const [message, setMessage] = useState(null);
-  const [token, setToken] = useState(
-    localStorage.getItem("library-user-token"),
-  );
   const [userLogged, setUserLogged] = useState(
     localStorage.getItem("library-user"),
   );
@@ -24,6 +22,7 @@ const App = () => {
   };
 
   const onLogout = () => {
+    setNotify(`${userLogged} logged out`);
     setUserLogged("");
     localStorage.clear();
     client.resetStore();
@@ -38,7 +37,13 @@ const App = () => {
         {userLogged && (
           <>
             <button onClick={() => setPage("add")}>add book</button>
+            <button onClick={() => setPage("recommend")}>recommend</button>
             <button onClick={onLogout}>logout</button>
+            <div>
+              <p>
+                <b>{userLogged}</b> is logged in
+              </p>
+            </div>
           </>
         )}
         {!userLogged && <button onClick={() => setPage("login")}>login</button>}
@@ -52,10 +57,10 @@ const App = () => {
       <LoginForm
         show={page === "login"}
         setNotify={setNotify}
-        setToken={setToken}
         setPage={setPage}
         setUserLogged={setUserLogged}
       />
+      <Recommend show={page === "recommend"} setNotify={setNotify} />
     </div>
   );
 };

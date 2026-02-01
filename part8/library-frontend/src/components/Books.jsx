@@ -25,7 +25,9 @@ const Books = ({ show, setNotify }) => {
   return (
     <div>
       <h2>Books</h2>
-
+      <p>
+        in genre <b>{genre}</b>
+      </p>
       <table>
         <tbody>
           <tr>

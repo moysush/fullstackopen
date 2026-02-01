@@ -17,6 +17,7 @@ const authLink = new SetContextLink(({ headers }) => {
   };
 });
 
+// runs everytimes there is a query or mutation request
 const client = new ApolloClient({
   link: authLink.concat(httpLink),
   cache: new InMemoryCache(),

@@ -49,6 +49,7 @@ const NewBook = ({ setNotify, show }) => {
 
   return (
     <div>
+      <h2>Add Book</h2>
       <form onSubmit={submit}>
         <div>
           title
