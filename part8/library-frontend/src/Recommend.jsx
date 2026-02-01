@@ -8,9 +8,7 @@ const Recommend = ({ show, setNotify }) => {
       setNotify(error.message);
     },
   });
-  const { data: booksData } = useQuery(ALL_BOOKS, {
-    skip: !show,
-  });
+  const { data: booksData } = useQuery(ALL_BOOKS);
   const favoriteGenre = userData?.me?.favoriteGenre;
 
   const booksToShow = booksData?.allBooks?.filter((b) =>
@@ -32,7 +30,7 @@ const Recommend = ({ show, setNotify }) => {
             <th>Author</th>
             <th>Published</th>
           </tr>
-          {booksToShow.map((b) => (
+          {booksToShow?.map((b) => (
             <tr key={b.id}>
               <td>{b.title}</td>
               <td>{b.author.name}</td>
