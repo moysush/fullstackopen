@@ -8,10 +8,10 @@ const Recommend = ({ show, setNotify }) => {
       setNotify(error.message);
     },
   });
-  const { data: booksData } = useQuery(ALL_BOOKS);
+  const { data: booksData } = useQuery(ALL_BOOKS, {
+    skip: !show,
+  });
   const favoriteGenre = userData?.me?.favoriteGenre;
-
-  console.log(userData);
 
   const booksToShow = booksData?.allBooks?.filter((b) =>
     b.genres.includes(favoriteGenre),

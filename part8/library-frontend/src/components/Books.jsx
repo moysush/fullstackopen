@@ -3,24 +3,24 @@ import { ALL_BOOKS } from "../queries";
 import { useState } from "react";
 
 const Books = ({ show, setNotify }) => {
+  const [genre, setGenre] = useState("all");
   const { data, loading } = useQuery(ALL_BOOKS, {
+    variables: { genre: genre === "all" ? null : genre },
     onError: (error) => {
       setNotify(error.message);
     },
   });
-  const [genre, setGenre] = useState("all");
 
   if (!show) {
     return null;
   }
 
   if (loading) return <p>Loading...</p>;
-  // if (error) return setNotify(error.message);
 
-  const booksToShow =
-    genre === "all"
-      ? data.allBooks
-      : data.allBooks.filter((b) => b.genres.includes(genre));
+  // const booksToShow =
+  //   genre === "all"
+  //     ? data.allBooks
+  //     : data.allBooks.filter((b) => b.genres.includes(genre));
 
   return (
     <div>
@@ -35,7 +35,7 @@ const Books = ({ show, setNotify }) => {
             <th>Author</th>
             <th>Published</th>
           </tr>
-          {booksToShow.map((b) => (
+          {data.allBooks.map((b) => (
             <tr key={b.id}>
               <td>{b.title}</td>
               <td>{b.author.name}</td>
