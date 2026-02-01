@@ -8,19 +8,17 @@ const NewBook = ({ setNotify, show }) => {
   const [published, setPublished] = useState("");
   const [genre, setGenre] = useState("");
   const [genres, setGenres] = useState([]);
-  const [addBook, { data, loading, error }] = useMutation(ADD_BOOK, {
+  const [addBook, { loading }] = useMutation(ADD_BOOK, {
     refetchQueries: [ALL_BOOKS, ALL_AUTHORS],
     onCompleted: (data) => {
-      if (data.addBook) {
-        setNotify("New book added.");
-      } else if (!data.addBook) {
-        setNotify("Book not added.");
-      }
+      setNotify(`New book: ${data.addBook.title} added.`);
+    },
+    onError: (error) => {
+      setNotify(error.message);
     },
   });
 
   if (loading) return "Submitting...";
-  if (error) return `Submission error! ${error.message}`;
 
   if (!show) {
     return null;

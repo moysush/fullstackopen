@@ -3,12 +3,19 @@ import { ALL_AUTHORS, EDIT_AUTHOR } from "../queries";
 import { useState } from "react";
 import { useMutation } from "@apollo/client/react";
 
-const Authors = (props) => {
+const Authors = ({ show, setNotify }) => {
   const { data, loading, error } = useQuery(ALL_AUTHORS);
   const [form, setForm] = useState({ name: "", born: "" });
-  const [editAuthor] = useMutation(EDIT_AUTHOR);
+  const [editAuthor] = useMutation(EDIT_AUTHOR, {
+    onCompleted: (data) => {
+      setNotify(`birth year updated for ${data.editAuthor.name}`);
+    },
+    onError: (error) => {
+      setNotify(error.message);
+    },
+  });
 
-  if (!props.show) {
+  if (!show) {
     return null;
   }
 
