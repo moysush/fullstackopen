@@ -1,15 +1,26 @@
 import { useQuery } from "@apollo/client/react";
 import { ALL_BOOKS } from "../queries";
+import { useState } from "react";
 
 const Books = ({ show, setNotify }) => {
-  const { data, loading, error } = useQuery(ALL_BOOKS);
+  const { data, loading } = useQuery(ALL_BOOKS, {
+    onError: (error) => {
+      setNotify(error.message);
+    },
+  });
+  const [genre, setGenre] = useState("all");
 
   if (!show) {
     return null;
   }
 
   if (loading) return <p>Loading...</p>;
-  if (error) return setNotify(error.message);
+  // if (error) return setNotify(error.message);
+
+  const booksToShow =
+    genre === "all"
+      ? data.allBooks
+      : data.allBooks.filter((b) => b.genres.includes(genre));
 
   return (
     <div>
@@ -18,19 +29,28 @@ const Books = ({ show, setNotify }) => {
       <table>
         <tbody>
           <tr>
-            <th></th>
+            <th>title</th>
             <th>Author</th>
             <th>Published</th>
           </tr>
-          {data.allBooks.map((a) => (
-            <tr key={a.id}>
-              <td>{a.title}</td>
-              <td>{a.author.name}</td>
-              <td>{a.published}</td>
+          {booksToShow.map((b) => (
+            <tr key={b.id}>
+              <td>{b.title}</td>
+              <td>{b.author.name}</td>
+              <td>{b.published}</td>
             </tr>
           ))}
         </tbody>
       </table>
+      <div>
+        {data?.allBooks &&
+          [...new Set(data.allBooks.flatMap((b) => b.genres))].map((g, i) => (
+            <button key={`${g}+${i}`} onClick={() => setGenre(g)}>
+              {g}
+            </button>
+          ))}
+        <button onClick={() => setGenre("all")}>all genres</button>
+      </div>
     </div>
   );
 };
