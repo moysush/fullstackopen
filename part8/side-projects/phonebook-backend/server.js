@@ -1,5 +1,12 @@
 const { ApolloServer } = require("@apollo/server");
-const { startStandaloneServer } = require("@apollo/server/standalone");
+const {
+  ApolloServerPluginDrainHttpServer,
+} = require("@apollo/server/plugin/drainHttpServer");
+const { expressMiddleware } = require("@as-integrations/express5");
+const cors = require("cors");
+const express = require("express");
+const { makeExecutableSchema } = require("@graphql-tools/schema");
+const http = require("http");
 const jwt = require("jsonwebtoken");
 
 const resolvers = require("./resolvers");
@@ -17,22 +24,34 @@ const getUserFromAuthHeader = async (auth) => {
   return User.findById(decodedToken.id).populate("friends"); // populate simply populates the friends field for that user
 };
 
-const startServer = (port) => {
+const startServer = async (port) => {
+  const app = express();
+  const httpServer = http.createServer(app);
+
   const server = new ApolloServer({
-    typeDefs,
-    resolvers,
+    schema: makeExecutableSchema({ typeDefs, resolvers }),
+    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
   });
 
-  startStandaloneServer(server, {
-    listen: { port },
-    context: async ({ req }) => {
-      // extracts the authorization token sent by the user so that login verification can happen
-      const auth = req.headers.authorization;
-      const currentUser = await getUserFromAuthHeader(auth);
-      return { currentUser };
-    },
-  }).then(({ url }) => {
-    console.log(`Server ready at ${url}`);
+  // graphql server
+  await server.start();
+
+  // express middlware
+  app.use(
+    "/",
+    cors(),
+    express.json(),
+    expressMiddleware(server, {
+      context: async ({ req }) => {
+        const auth = req.headers.authorization;
+        const currentUser = await getUserFromAuthHeader(auth);
+        return currentUser;
+      },
+    }),
+  );
+
+  httpServer.listen(port, () => {
+    console.log(`server is now running on http://localhost:${port}`);
   });
 };
 
