@@ -7,8 +7,11 @@ const cors = require("cors");
 const express = require("express");
 const { makeExecutableSchema } = require("@graphql-tools/schema");
 const http = require("http");
-const jwt = require("jsonwebtoken");
 
+const { WebSocketServer } = require("ws");
+const { useServer } = require("graphql-ws/use/ws");
+
+const jwt = require("jsonwebtoken");
 const resolvers = require("./resolvers");
 const typeDefs = require("./schema");
 const User = require("./models/user");
@@ -28,9 +31,28 @@ const startServer = async (port) => {
   const app = express();
   const httpServer = http.createServer(app);
 
+  const wsServer = new WebSocketServer({
+    server: httpServer,
+    path: "/",
+  });
+
+  const schema = makeExecutableSchema({ typeDefs, resolvers });
+  const serverCleanup = useServer({ schema }, wsServer);
+
   const server = new ApolloServer({
-    schema: makeExecutableSchema({ typeDefs, resolvers }),
-    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+    schema,
+    plugins: [
+      ApolloServerPluginDrainHttpServer({ httpServer }),
+      {
+        async serverWillStart() {
+          return {
+            async drainServer() {
+              await serverCleanup.dispose();
+            },
+          };
+        },
+      },
+    ],
   });
 
   // graphql server
@@ -45,7 +67,7 @@ const startServer = async (port) => {
       context: async ({ req }) => {
         const auth = req.headers.authorization;
         const currentUser = await getUserFromAuthHeader(auth);
-        return currentUser;
+        return { currentUser };
       },
     }),
   );

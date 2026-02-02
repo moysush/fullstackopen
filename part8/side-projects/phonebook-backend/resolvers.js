@@ -1,7 +1,10 @@
 const { GraphQLError } = require("graphql/error");
+const { PubSub } = require("graphql-subscriptions");
 const Person = require("./models/person");
 const jwt = require("jsonwebtoken");
 const User = require("./models/user");
+
+const pubsub = new PubSub();
 
 const resolvers = {
   Query: {
@@ -16,7 +19,7 @@ const resolvers = {
       return await Person.find({ phone: { $exists: args.phone === "YES" } });
     },
     findPerson: async (root, args) => await Person.findOne({ name: args.name }),
-    me: (root, args, context) => {
+    me: (root, args, context) => {    
       return context.currentUser;
     },
   },
@@ -68,6 +71,8 @@ const resolvers = {
           },
         });
       }
+
+      pubsub.publish("PERSON_ADDED", { personAdded: person });
 
       return person;
     },
@@ -125,6 +130,12 @@ const resolvers = {
       };
 
       return { value: jwt.sign(userForToken, process.env.JWT_SECRET) };
+    },
+  },
+
+  Subscription: {
+    personAdded: {
+      subscribe: () => pubsub.asyncIterableIterator("PERSON_ADDED"),
     },
   },
 };
