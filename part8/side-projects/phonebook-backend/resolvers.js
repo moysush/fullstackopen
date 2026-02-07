@@ -10,16 +10,20 @@ const resolvers = {
   Query: {
     personCount: () => Person.collection.countDocuments(),
     allPersons: async (root, args) => {
+      console.log("Person.find");
+
       if (!args.phone) {
         // filters missing
-        return await Person.find({});
+        return await Person.find({}).populate("friendOf");
       }
-      //   const byPhone = (p) => (args.phone === "YES" ? p.phone : !p.phone);
-      //   return persons.filter(byPhone);
-      return await Person.find({ phone: { $exists: args.phone === "YES" } });
+
+      return await Person.find({
+        phone: { $exists: args.phone === "YES" },
+      }).populate("friendOf");
     },
-    findPerson: async (root, args) => await Person.findOne({ name: args.name }),
-    me: (root, args, context) => {    
+    findPerson: async (root, args) =>
+      await Person.findOne({ name: args.name }).populate("friendOf"),
+    me: (root, args, context) => {
       return context.currentUser;
     },
   },
@@ -34,6 +38,17 @@ const resolvers = {
       };
     },
     id: (root) => root.id,
+    // friendOf: async (root) => {
+    //   console.log("User.find");
+
+    //   const friends = await User.find({
+    //     friends: {
+    //       $in: [root._id],
+    //     },
+    //   });
+
+    //   return friends;
+    // },
   },
 
   Mutation: {
@@ -59,9 +74,13 @@ const resolvers = {
       const person = new Person({ ...args });
 
       try {
-        await person.save();
+        // await person.save();
         currentUser.friends = currentUser.friends.concat(person);
         await currentUser.save();
+
+        // saving the user to friendOf
+        person.friendOf = person.friendOf.concat(currentUser);
+        await person.save();
       } catch (error) {
         throw new GraphQLError(`Saving person failed: ${error.message}`, {
           extensions: {
