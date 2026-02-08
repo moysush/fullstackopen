@@ -4,15 +4,22 @@ import Books from "./components/Books";
 import NewBook from "./components/NewBook";
 import Notify from "./components/Notify";
 import LoginForm from "./components/LoginForm";
-import { useApolloClient } from "@apollo/client/react";
+import { useApolloClient, useSubscription } from "@apollo/client/react";
 import Recommend from "./Recommend";
+import { BOOK_ADDED } from "./queries";
 const App = () => {
   const [page, setPage] = useState("authors");
   const [message, setMessage] = useState(null);
   const [userLogged, setUserLogged] = useState(
     localStorage.getItem("library-user"),
   );
+
   const client = useApolloClient();
+  useSubscription(BOOK_ADDED, {
+    onData: ({ data }) => {
+      setNotify(`New book: ${data.data.bookAdded.title} added.`);
+    },
+  });
 
   const setNotify = (message) => {
     setMessage(message);

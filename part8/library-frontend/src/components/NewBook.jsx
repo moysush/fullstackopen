@@ -11,7 +11,7 @@ const NewBook = ({ setNotify, show }) => {
   const [addBook, { loading }] = useMutation(ADD_BOOK, {
     refetchQueries: [ALL_BOOKS, ALL_AUTHORS],
     onCompleted: (data) => {
-      setNotify(`New book: ${data.addBook.title} added.`);
+      // setNotify(`New book: ${data.addBook.title} added.`);
     },
     onError: (error) => {
       setNotify(error.message);
