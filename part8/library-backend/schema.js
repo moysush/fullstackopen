@@ -46,6 +46,10 @@ const typeDefs = /* GraphQL */ `
     createUser(username: String!, favoriteGenre: String!): User
     login(username: String!, password: String!): Token
   }
+
+  type Subscription {
+    bookAdded: Book
+  }
 `;
 
 // the Author in Book object should include the whole Author details but the parameter of the addBook should only be sent with the author name

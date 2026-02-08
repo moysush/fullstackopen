@@ -3,6 +3,9 @@ const Author = require("./models/author");
 const User = require("./models/user");
 const { GraphQLError } = require("graphql");
 const jwt = require("jsonwebtoken");
+const { PubSub } = require("graphql-subscriptions");
+
+const pubsub = new PubSub();
 
 const resolvers = {
   Query: {
@@ -51,7 +54,7 @@ const resolvers = {
           },
         });
       }
-      
+
       let author = await Author.findOne({ name: args.author });
       if (!author) {
         author = new Author({ name: args.author });
@@ -74,7 +77,8 @@ const resolvers = {
         genres: args.genres,
         author: author._id,
       });
-      return await book.save().catch((error) => {
+
+      await book.save().catch((error) => {
         throw new GraphQLError(`Book could not be saved; ${error.message}`, {
           extensions: {
             code: "BAD_USER_INPUT",
@@ -82,6 +86,10 @@ const resolvers = {
           },
         });
       });
+
+      pubsub.publish("BOOK_ADDED", { bookAdded: book });
+
+      return book;
     },
 
     editAuthor: async (root, args, context) => {
@@ -128,6 +136,12 @@ const resolvers = {
       // we are using the username and user id for for the token
       const sign = jwt.sign(userForToken, process.env.JWT_SECRET);
       return { value: sign };
+    },
+  },
+
+  Subscription: {
+    bookAdded: {
+      subscribe: () => pubsub.asyncIterableIterator("BOOK_ADDED"),
     },
   },
 };

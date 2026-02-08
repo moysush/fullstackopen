@@ -1,5 +1,15 @@
-const { startStandaloneServer } = require("@apollo/server/standalone");
 const { ApolloServer } = require("@apollo/server");
+const {
+  ApolloServerPluginDrainHttpServer,
+} = require("@apollo/server/plugin/drainHttpServer");
+const { expressMiddleware } = require("@as-integrations/express5");
+const express = require("express");
+const cors = require("cors");
+const http = require("http");
+// graphql-ws
+const { makeExecutableSchema } = require("@graphql-tools/schema");
+const { WebSocketServer } = require("ws");
+const { useServer } = require("graphql-ws/use/ws");
 const typeDefs = require("./schema");
 const resolvers = require("./resolvers");
 const jwt = require("jsonwebtoken");
@@ -14,22 +24,51 @@ const getUserFromAuthHeader = async (auth) => {
   return await User.findById(decodedToken.id);
 };
 
-const startServer = (port) => {
+const startServer = async (port) => {
+  const app = express();
+  const httpServer = http.createServer(app);
+
+  const wsServer = new WebSocketServer({
+    server: httpServer,
+    path: "/",
+  });
+  
+  const schema = makeExecutableSchema({ typeDefs, resolvers });
+  const serverCleanup = useServer({ schema }, wsServer);
+
   const server = new ApolloServer({
-    typeDefs,
-    resolvers,
+    schema,
+    plugins: [ApolloServerPluginDrainHttpServer({ httpServer }),
+      {
+        async serverWillStart(){
+          return {
+            async drainServer(){
+              await serverCleanup.dispose()
+            }
+          }
+        }
+      }
+    ],
   });
 
-  startStandaloneServer(server, {
-    listen: { port },
-    // context is like react context; it can make something available to any resolvers
-    context: async ({ req }) => {
-      const auth = req.headers.authorization; // getting from header
-      const currentUser = await getUserFromAuthHeader(auth); // decode and return the user
-      return { currentUser };
-    },
-  }).then(({ url }) => {
-    console.log(`Server ready at ${url}`);
+  await server.start();
+
+
+  app.use(
+    "/",
+    cors(),
+    express.json(),
+    expressMiddleware(server, {
+      context: async ({ req }) => {
+        const auth = req.headers.authorization; // getting from header
+        const currentUser = await getUserFromAuthHeader(auth); // decode and return the user
+        return { currentUser };
+      },
+    }),
+  );
+
+  httpServer.listen(port, () => {
+    console.log(`🚀 Server ready at http://localhost:${port}/`);
   });
 };
 
