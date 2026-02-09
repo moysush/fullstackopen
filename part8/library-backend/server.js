@@ -14,6 +14,21 @@ const typeDefs = require("./schema");
 const resolvers = require("./resolvers");
 const jwt = require("jsonwebtoken");
 const User = require("./models/user");
+const Book = require("./models/book");
+const DataLoader = require("dataloader");
+
+const batchBookCounts = async (keys) => {
+  const books = await Book.find({ author: { $in: keys } });
+  console.log(
+    "🔥 BATCHING: I am going to the database ONE time for " +
+      keys.length +
+      " authors!",
+  );
+  return keys.map(
+    (key) =>
+      books.filter((book) => book.author.toString() === key.toString()).length,
+  );
+};
 
 // so that we can check if the user is authenticated
 const getUserFromAuthHeader = async (auth) => {
@@ -32,27 +47,27 @@ const startServer = async (port) => {
     server: httpServer,
     path: "/",
   });
-  
+
   const schema = makeExecutableSchema({ typeDefs, resolvers });
   const serverCleanup = useServer({ schema }, wsServer);
 
   const server = new ApolloServer({
     schema,
-    plugins: [ApolloServerPluginDrainHttpServer({ httpServer }),
+    plugins: [
+      ApolloServerPluginDrainHttpServer({ httpServer }),
       {
-        async serverWillStart(){
+        async serverWillStart() {
           return {
-            async drainServer(){
-              await serverCleanup.dispose()
-            }
-          }
-        }
-      }
+            async drainServer() {
+              await serverCleanup.dispose();
+            },
+          };
+        },
+      },
     ],
   });
 
   await server.start();
-
 
   app.use(
     "/",
@@ -62,7 +77,12 @@ const startServer = async (port) => {
       context: async ({ req }) => {
         const auth = req.headers.authorization; // getting from header
         const currentUser = await getUserFromAuthHeader(auth); // decode and return the user
-        return { currentUser };
+        return {
+          currentUser,
+          loaders: {
+            bookCount: new DataLoader((keys) => batchBookCounts(keys)),
+          },
+        };
       },
     }),
   );

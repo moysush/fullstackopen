@@ -6,7 +6,8 @@ import Notify from "./components/Notify";
 import LoginForm from "./components/LoginForm";
 import { useApolloClient, useSubscription } from "@apollo/client/react";
 import Recommend from "./Recommend";
-import { BOOK_ADDED } from "./queries";
+import { ALL_AUTHORS, ALL_BOOKS, BOOK_ADDED } from "./queries";
+import { updateBooks } from "../utils/updateBooks";
 const App = () => {
   const [page, setPage] = useState("authors");
   const [message, setMessage] = useState(null);
@@ -17,7 +18,9 @@ const App = () => {
   const client = useApolloClient();
   useSubscription(BOOK_ADDED, {
     onData: ({ data }) => {
-      setNotify(`New book: ${data.data.bookAdded.title} added.`);
+      const addedBook = data.data.bookAdded;
+      setNotify(`New book: ${addedBook.title} added.`);
+      updateBooks(client.cache, addedBook);
     },
   });
 

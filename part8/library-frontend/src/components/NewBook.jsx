@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useMutation } from "@apollo/client/react";
 import { ADD_BOOK, ALL_AUTHORS, ALL_BOOKS } from "../queries";
+import { updateBooks } from "../../utils/updateBooks";
 
 const NewBook = ({ setNotify, show }) => {
   const [title, setTitle] = useState("");
@@ -9,9 +10,9 @@ const NewBook = ({ setNotify, show }) => {
   const [genre, setGenre] = useState("");
   const [genres, setGenres] = useState([]);
   const [addBook, { loading }] = useMutation(ADD_BOOK, {
-    refetchQueries: [ALL_BOOKS, ALL_AUTHORS],
-    onCompleted: (data) => {
-      // setNotify(`New book: ${data.addBook.title} added.`);
+    // refetchQueries: [ALL_BOOKS, ALL_AUTHORS],
+    update: (cache, data) => {
+      updateBooks(cache, data.data.addBook);
     },
     onError: (error) => {
       setNotify(error.message);

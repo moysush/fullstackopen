@@ -27,15 +27,19 @@ const resolvers = {
       }
       return await Book.find(query);
     },
-    allAuthors: async () => await Author.find({}),
+    allAuthors: async () => {
+      console.log("Fetching all authors");
+      return await Author.find({});
+    },
     me: (root, args, context) => context.currentUser,
   },
   // for each author
   // the root here is of Author
   // these are a little complex
   Author: {
-    bookCount: async (root) => {
-      return await Book.countDocuments({ author: root._id });
+    bookCount: async (root, args, context) => {
+      // the load() is loading each request to send just one request to the database for better peroformance
+      return context.loaders.bookCount.load(root._id);
     },
   },
   // runs everytime any query needs to resolve the author field
