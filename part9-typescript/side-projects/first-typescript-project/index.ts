@@ -1,5 +1,5 @@
 import express from "express";
-import { calculator } from "./calculator";
+import { calculator, Operation } from "./calculator";
 
 const app = express();
 
@@ -11,10 +11,7 @@ app.post("/calculate", (req, res) => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const { value1, value2, op } = req.body;
 
-  
-
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-  const result = calculator(Number(value1), Number(value2), op);
+  const result = calculator(Number(value1), Number(value2), op as Operation);
   res.send({ result });
 });
 

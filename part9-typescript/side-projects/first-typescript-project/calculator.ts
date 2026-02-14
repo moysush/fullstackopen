@@ -1,4 +1,4 @@
-type Operation = "multiply" | "add" | "divide" | "subtract";
+export type Operation = "multiply" | "add" | "divide" | "subtract";
 // type Result = string | number;
 
 export const calculator = (a: number, b: number, op: Operation): number => {
@@ -17,14 +17,14 @@ export const calculator = (a: number, b: number, op: Operation): number => {
   }
 };
 
-try {
-  console.log(calculator(5, 0, "divide"));
-} catch (error: unknown) {
-  let errorMessage = "Something went wrong. ";
-  if (error instanceof Error) {
-    errorMessage += error.message;
-  }
-  console.log(errorMessage);
-}
+// try {
+//   console.log(calculator(5, 0, "divide"));
+// } catch (error: unknown) {
+//   let errorMessage = "Something went wrong. ";
+//   if (error instanceof Error) {
+//     errorMessage += error.message;
+//   }
+//   console.log(errorMessage);
+// }
 
-console.log(process.argv);
+// console.log(process.argv);
