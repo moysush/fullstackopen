@@ -1,4 +1,4 @@
-interface Result {
+export interface Result {
   periodLength: number;
   trainingDays: number;
   success: boolean;
@@ -9,12 +9,12 @@ interface Result {
 }
 
 const RATING_DESCRIPTIONS: Record<number, string> = {
-  1: "needs improvement",
+  1: "bad",
   2: "not too bad but could be better",
   3: "great!",
 };
 
-const calculateExercises = (
+export const calculateExercises = (
   exerciseData: number[],
   target: number,
 ): Result | string => {
@@ -37,23 +37,27 @@ const calculateExercises = (
   };
 };
 
-try {
-  // turning args into an array without the first two args
-  const args = process.argv.slice(2);
+if (require.main === module) {
+  try {
+    // turning args into an array without the first two args
+    const args = process.argv.slice(2);
 
-  if (args.length < 2) {
-    throw new Error("Please provide at least one target and exercise day");
+    if (args.length < 2) {
+      throw new Error("Please provide at least one target and exercise day");
+    }
+
+    const exerciseData = args.slice(1).map((a) => Number(a));
+    const target = Number(args[0]);
+
+    if (isNaN(target) || exerciseData.some(isNaN)) {
+      throw new Error("Please provide numerical values only");
+    }
+
+    console.log(calculateExercises(exerciseData, target));
+  } catch (error) {
+    console.log(
+      error instanceof Error ? error.message : "Something went wrong",
+    );
   }
-
-  const exerciseData = args.slice(1).map((a) => Number(a));
-  const target = Number(args[0]);
-
-  if (isNaN(target) || exerciseData.some(isNaN)) {
-    throw new Error("Please provide numerical values only");
-  }
-
-  console.log(calculateExercises(exerciseData, target));
-} catch (error) {
-  console.log(error instanceof Error ? error.message : "Something went wrong");
+  // console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2));
 }
-// console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2));
