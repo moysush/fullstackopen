@@ -1,0 +1,10 @@
+POST http://localhost:3001/api/patients
+Content-Type: application/json
+
+{
+    "name": "John Roa",
+    "dateOfBirth": "1997-05-19",
+    "ssn": "090555-122X",
+    "gender": "male",
+    "occupation": "New york city cop"
+}

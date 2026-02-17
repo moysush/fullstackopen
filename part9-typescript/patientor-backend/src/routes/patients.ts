@@ -7,4 +7,17 @@ router.get("/", (_req, res) => {
   res.send(patientsService.getPatientsWithoutSsn());
 });
 
+router.post("/", (req, res) => {
+  try {
+    const newPatient = patientsService.addPatient(req.body);
+    res.json(newPatient);
+  } catch (error) {
+    res
+      .status(400)
+      .json({
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
+  }
+});
+
 export default router;
