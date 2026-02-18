@@ -67,7 +67,7 @@ const toNewDiaryEntry = (object: unknown): NewDiaryEntry => {
     };
     return newEntry;
   }
-  throw new Error("Incorrect date: some fields are missing");
+  throw new Error("Incorrect data: some fields are missing");
 };
 
 export default toNewDiaryEntry;
