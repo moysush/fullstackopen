@@ -51,9 +51,9 @@ import z from "zod";
 // };
 
 export const newEntrySchema = z.object({
-  weather: z.nativeEnum(Weather),
-  visibility: z.nativeEnum(Visibility),
-  date: z.string().date(),
+  weather: z.enum(Weather),
+  visibility: z.enum(Visibility),
+  date: z.iso.date(),
   comment: z.string(),
 });
 
