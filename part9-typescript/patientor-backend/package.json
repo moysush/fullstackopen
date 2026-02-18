@@ -15,7 +15,8 @@
   "license": "ISC",
   "dependencies": {
     "express": "^5.2.1",
-    "uuid": "^13.0.0"
+    "uuid": "^13.0.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
