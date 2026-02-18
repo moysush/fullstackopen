@@ -10,9 +10,9 @@ router.get("/", (_req, res) => {
 
 router.post("/", (req, res) => {
   try {
-    const newPatient = toNewPatientEntry(req.body);
-    patientsService.addPatient(req.body);
-    res.json(newPatient);
+    const newPatientEntry = toNewPatientEntry(req.body);
+    const addedPatient = patientsService.addPatient(newPatientEntry);
+    res.json(addedPatient);
   } catch (error) {
     res.status(400).json({
       error: error instanceof Error ? error.message : "Unknown error",
