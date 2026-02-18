@@ -10,7 +10,9 @@ router.get("/", (_req, res) => {
 
 router.post("/", (req, res) => {
   try {
+    // type guard and validator
     const newPatientEntry = toNewPatientEntry(req.body);
+    // adding patient in the database and getting an id for the patient
     const addedPatient = patientsService.addPatient(newPatientEntry);
     res.json(addedPatient);
   } catch (error) {
