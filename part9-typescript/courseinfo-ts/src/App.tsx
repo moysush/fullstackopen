@@ -37,8 +37,8 @@ const Total = ({ totalExercises }: TotalProps) => {
 };
 
 const App = () => {
-  const courseName = "Half Stack application development";
-  const courseParts = [
+  const courseName: string = "Half Stack application development";
+  const courseParts: CoursePart[] = [
     {
       name: "Fundamentals",
       exerciseCount: 10,
