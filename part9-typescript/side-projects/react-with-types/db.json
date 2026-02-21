@@ -1,0 +1,32 @@
+{
+  "notes": [
+    {
+      "id": "1",
+      "content": "Read TypeScript handbook section on generics."
+    },
+    {
+      "id": "2",
+      "content": "Set up json-server and verify endpoints."
+    },
+    {
+      "id": "3",
+      "content": "Refactor Welcome component into its own file."
+    },
+    {
+      "id": "4",
+      "content": "Add basic unit tests for App component."
+    },
+    {
+      "id": "5",
+      "content": "Check React Fast Refresh export requirements."
+    },
+    {
+      "id": "6",
+      "content": "Document API responses in README."
+    },
+    {
+      "id": "7",
+      "content": "Hello, World!"
+    }
+  ]
+}

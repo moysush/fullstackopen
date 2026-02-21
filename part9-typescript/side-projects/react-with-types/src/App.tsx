@@ -1,23 +1,27 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createNote, getAllNote } from "./services/noteService";
+import type { Note } from "../types";
 
 function App() {
-  interface Note {
-    id: string;
-    content: string;
-  }
-  const [notes, setNotes] = useState<Note[]>([{ id: "1", content: "testing" }]);
+  const [notes, setNotes] = useState<Note[]>([]);
   const [newNote, setNewNote] = useState("");
-  
+
+  useEffect(() => {
+    // we need to use the .json() to parse the data like we do in the server
+    getAllNote().then((data) => setNotes(data));
+  }, []);
+
   const noteCreation = (e: React.SyntheticEvent) => {
     e.preventDefault();
 
     const noteToAdd = {
       id: String(notes.length + 1),
       content: newNote,
-    }
+    };
 
-    setNotes(notes.concat(noteToAdd))
-    setNewNote('')
+    createNote(noteToAdd).then((data) => setNotes(notes.concat(data)));
+
+    setNewNote("");
   };
 
   return (
