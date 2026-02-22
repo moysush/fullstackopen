@@ -10,6 +10,7 @@ export type NewDiary = Omit<Diary, "id">;
 
 export interface NewDiaryFormProps {
   onSubmit: (newDiary: NewDiary) => void;
+  formRef: React.RefObject<() => void>;
 }
 
 export interface ValidationError {

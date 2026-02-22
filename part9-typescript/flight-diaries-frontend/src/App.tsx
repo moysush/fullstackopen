@@ -1,12 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Diary, NewDiary } from "./types";
 import { createNewDiary, getAllDiaries } from "./services/diaryServices";
-import { NewDiaryForm } from "./NewDiaryForm";
+import { NewDiaryForm } from "./components/NewDiaryForm";
 import { useNotification } from "./useNotification";
+import { Notification } from "./components/Notification";
 
 function App() {
   const [diaries, setDiaries] = useState<Diary[]>([]);
   const [message, notify] = useNotification();
+  const resetForm = useRef<() => void>(() => {});
 
   useEffect(() => {
     getAllDiaries()
@@ -16,12 +18,13 @@ function App() {
           ? notify(error.message)
           : notify("An unexpected error occured"),
       );
-  }, []);
+  });
 
   const handleNewDiary = (newEntry: NewDiary) => {
     createNewDiary(newEntry)
       .then((data) => {
         setDiaries((prev) => prev.concat(data));
+        resetForm.current();
         notify("New entry added!");
       })
       .catch((error: unknown) =>
@@ -35,14 +38,8 @@ function App() {
     <>
       <div>
         <h2>Add New Entry</h2>
-        <p
-          style={
-            message.includes("Error") ? { color: "red" } : { color: "green" }
-          }
-        >
-          {message}
-        </p>
-        <NewDiaryForm onSubmit={handleNewDiary} />
+        <Notification message={message} />
+        <NewDiaryForm onSubmit={handleNewDiary} formRef={resetForm} />
       </div>
       <div>
         <h2>Diary Entries</h2>

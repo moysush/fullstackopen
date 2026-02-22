@@ -1,11 +1,25 @@
-import React, { useState } from "react";
-import type { NewDiaryFormProps } from "./types";
+import React, { useEffect, useState } from "react";
+import type { NewDiaryFormProps } from "../types";
 
-export const NewDiaryForm: React.FC<NewDiaryFormProps> = ({ onSubmit }) => {
+export const NewDiaryForm = ({ onSubmit, formRef }: NewDiaryFormProps) => {
   const [date, setDate] = useState<string>("");
   const [visibility, setVisibility] = useState<string>("");
   const [weather, setWeather] = useState<string>("");
   const [comment, setComment] = useState<string>("");
+
+  // reset states
+  const resetFields = () => {
+    setDate("");
+    setVisibility("");
+    setWeather("");
+    setComment("");
+  };
+
+  useEffect(() => {
+    if (formRef) {
+      formRef.current = resetFields;
+    }
+  }, [formRef]);
 
   const handleSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -16,12 +30,8 @@ export const NewDiaryForm: React.FC<NewDiaryFormProps> = ({ onSubmit }) => {
       comment,
     };
     onSubmit(newEntry);
-    // reset states
-    setDate("");
-    setVisibility("");
-    setWeather("");
-    setComment("");
   };
+  
   return (
     <form onSubmit={handleSubmit}>
       <input
