@@ -1,3 +1,5 @@
+import type { RefObject } from "react";
+
 export interface Diary {
   id: string;
   date: string;
@@ -10,7 +12,7 @@ export type NewDiary = Omit<Diary, "id">;
 
 export interface NewDiaryFormProps {
   onSubmit: (newDiary: NewDiary) => void;
-  formRef: React.RefObject<() => void>;
+  formRef: RefObject<() => void>;
 }
 
 export interface ValidationError {
