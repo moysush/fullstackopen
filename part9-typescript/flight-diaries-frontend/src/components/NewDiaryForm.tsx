@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, type SyntheticEvent } from "react";
 import type { NewDiaryFormProps } from "../types";
 
 export const NewDiaryForm = ({ onSubmit, formRef }: NewDiaryFormProps) => {
@@ -21,7 +21,7 @@ export const NewDiaryForm = ({ onSubmit, formRef }: NewDiaryFormProps) => {
     }
   }, [formRef]);
 
-  const handleSubmit = (e: React.SyntheticEvent) => {
+  const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
     const newEntry = {
       date,
@@ -31,7 +31,7 @@ export const NewDiaryForm = ({ onSubmit, formRef }: NewDiaryFormProps) => {
     };
     onSubmit(newEntry);
   };
-  
+
   return (
     <form onSubmit={handleSubmit}>
       <input
