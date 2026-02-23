@@ -6,7 +6,23 @@ import z from "zod";
 const router = express.Router();
 
 router.get("/", (_req, res) => {
-  res.send(patientsService.getPatientsWithoutSsn());
+  res.send(patientsService.getNonSensitivePatient());
+});
+
+router.get("/:id", (req, res) => {
+  try {
+    const patient = patientsService.findById(req.params.id);
+    if (!patient) {
+      throw new Error("Patient not found");
+    }
+    res.send(patient);
+  } catch (error) {
+    res
+      .status(400)
+      .json({
+        error: error instanceof Error ? error.message : "unknown error",
+      });
+  }
 });
 
 router.post("/", (req, res) => {
