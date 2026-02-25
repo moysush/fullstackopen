@@ -25,14 +25,17 @@ const PatientDetails = () => {
 
   return (
     <div>
-      <Typography variant="h4" sx={{ mt: 2, mb: 1 }}>
-        {patient.name}{" "}
+      <Typography
+        variant="h4"
+        sx={{ mt: 2, mb: 1, display: "flex", alignItems: "center", gap: 1 }}
+      >
+        {patient.name}
         {patient.gender === "male" ? (
-          <MaleIcon />
+          <MaleIcon sx={{ fontSize: "inherit" }} />
         ) : patient.gender === "female" ? (
-          <FemaleIcon />
+          <FemaleIcon sx={{ fontSize: "inherit" }} />
         ) : (
-          <TransgenderIcon />
+          <TransgenderIcon sx={{ fontSize: "inherit" }} />
         )}
       </Typography>
       <Typography variant="body1">
@@ -43,6 +46,24 @@ const PatientDetails = () => {
         <strong>Occupation: </strong>
         {patient.occupation}
       </Typography>
+      <Typography variant="h6" sx={{ mt: 2 }}>
+        <strong>Entries</strong>
+      </Typography>
+      {patient.entries.length === 0
+        ? "No entries yet..."
+        : patient.entries.map((e) => {
+            return (
+              <div>
+                <Typography>{e.date}</Typography>
+                <Typography>{e.description}</Typography>
+                <ul>
+                  {e.diagnosisCodes?.map((c) => {
+                    return <li>{c}</li>;
+                  })}
+                </ul>
+              </div>
+            );
+          })}
     </div>
   );
 };
