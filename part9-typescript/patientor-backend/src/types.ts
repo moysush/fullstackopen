@@ -6,7 +6,7 @@ interface BaseEntry {
   description: string;
   date: string;
   specialist: string;
-  diagnosisCodes?: Diagnosis["code"][]; // array of codes
+  diagnosisCodes?: Array<Diagnosis["code"]>; // array of codes
 }
 
 enum healthCheckRating {
@@ -47,7 +47,7 @@ export type Entry =
   | HospitalEntry
   | OccupationalHealthcareEntry;
 
- type UnionOmit<T, K extends string | number | symbol> = T extends unknown
+type UnionOmit<T, K extends string | number | symbol> = T extends unknown
   ? Omit<T, K>
   : never;
 
