@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
-import { Patient } from "../../types";
+import { Diagnosis, Patient } from "../../types";
 import patientService from "../../services/patients";
+import diagnosesService from "../../services/diagnoses";
 import { useEffect, useState } from "react";
 import { Typography } from "@mui/material";
 import MaleIcon from "@mui/icons-material/Male";
@@ -10,17 +11,22 @@ import TransgenderIcon from "@mui/icons-material/Transgender";
 const PatientDetails = () => {
   const { id } = useParams<string>();
   const [patient, setPatient] = useState<Patient | undefined>();
+  const [diagnoses, setDiagnoses] = useState<Diagnosis[] | undefined>();
 
   useEffect(() => {
     // narrows the id type to string if it exists
     if (id) {
       patientService.findById(id).then((res) => setPatient(res));
+      diagnosesService.getAllDiagnoses().then((res) => setDiagnoses(res));
     }
   }, [id]);
 
   // narrows the patient to defined Patient
   if (!patient) {
     return <Typography>Patient not found...</Typography>;
+  }
+  if (!diagnoses) {
+    return null;
   }
 
   return (
@@ -55,10 +61,17 @@ const PatientDetails = () => {
             return (
               <div>
                 <Typography>{e.date}</Typography>
-                <Typography>{e.description}</Typography>
+                <Typography>
+                  <i>{e.description}</i>
+                </Typography>
                 <ul>
                   {e.diagnosisCodes?.map((c) => {
-                    return <li>{c}</li>;
+                    return (
+                      <li>
+                        {c}{" "}
+                        {diagnoses?.map((d) => (d.code === c ? d.name : null))}
+                      </li>
+                    );
                   })}
                 </ul>
               </div>
