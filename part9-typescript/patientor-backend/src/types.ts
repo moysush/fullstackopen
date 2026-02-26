@@ -9,7 +9,7 @@ interface BaseEntry {
   diagnosisCodes?: Array<Diagnosis["code"]>; // array of codes
 }
 
-enum healthCheckRating {
+export enum HealthCheckRating {
   "Healthy" = 0,
   "LowRisk" = 1,
   "HighRisk" = 2,
@@ -18,7 +18,7 @@ enum healthCheckRating {
 
 interface HealthCheckEntry extends BaseEntry {
   type: "HealthCheck";
-  healthCheckRating: healthCheckRating;
+  healthCheckRating: HealthCheckRating;
 }
 
 interface Discharge {

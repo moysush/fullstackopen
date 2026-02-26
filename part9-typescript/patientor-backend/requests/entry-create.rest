@@ -1,0 +1,48 @@
+POST http://localhost:3001/api/patients/d27736ec-f723-11e9-8f0b-362b9e155667/entries
+Content-Type: application/json
+// POST request bodies for creating new entries
+
+// HealthCheck entry
+# {
+#   "date": "2026-02-20",
+#   "specialist": "Dr. Jane Smith",
+#   "type": "HealthCheck",
+#   "description": "Routine annual checkup. Patient in good health.",
+#   "healthCheckRating": 0
+# }
+
+// Hospital entry
+# {
+#   "date": "2026-02-15",
+#   "type": "Hospital",
+#   "specialist": "Dr. Emily Wilson",
+#   "diagnosisCodes": ["J10.1", "R50.9"],
+#   "description": "Patient admitted with severe flu symptoms and high fever. Requires observation.",
+#   "discharge": {
+#     "date": "2026-02-18",
+#     "criteria": "Fever subsided, patient stable and ready for discharge."
+#   }
+# }
+
+// OccupationalHealthcare entry
+# {
+#   "date": "2026-02-22",
+#   "type": "OccupationalHealthcare",
+#   "specialist": "Dr. Michael Brown",
+#   "employerName": "Tech Corp",
+#   "diagnosisCodes": ["M54.5"],
+#   "description": "Work-related back strain from prolonged sitting. Ergonomic assessment recommended.",
+#   "sickLeave": {
+#     "startDate": "2026-02-22",
+#     "endDate": "2026-02-26"
+#   }
+# }
+
+// Another HealthCheck entry
+{
+  "date": "2026-02-25",
+  "specialist": "Dr. Sarah Johnson",
+  "type": "HealthCheck",
+  "description": "Follow-up visit for high blood pressure. Medication adjusted.",
+  "healthCheckRating": 2
+}

@@ -1,7 +1,7 @@
 import express from "express";
 import patientsService from "../services/patientsService";
-import toNewPatientEntry from "../utils";
 import z from "zod";
+import { toNewEntry, toNewPatient } from "../utils";
 
 const router = express.Router();
 
@@ -17,24 +17,38 @@ router.get("/:id", (req, res) => {
     }
     res.send(patient);
   } catch (error) {
-    res
-      .status(400)
-      .json({
-        error: error instanceof Error ? error.message : "unknown error",
-      });
+    res.status(400).json({
+      error: error instanceof Error ? error.message : "unknown error",
+    });
   }
 });
 
 router.post("/", (req, res) => {
   try {
     // type guard and validator
-    const newPatientEntry = toNewPatientEntry(req.body);
+    const newPatientEntry = toNewPatient(req.body);
     // adding patient in the database and getting an id for the patient
     const addedPatient = patientsService.addPatient(newPatientEntry);
     res.json(addedPatient);
   } catch (error) {
     res.status(400).json({
       error: error instanceof z.ZodError ? error.issues : "Unknown error",
+    });
+  }
+});
+
+router.post("/:id/entries", (req, res) => {
+  try {
+    // const { body } = req.body;
+    const validEntry = toNewEntry(req.body);
+    const addedEntry = patientsService.addEntry(req.params.id, validEntry);
+    if (!addedEntry) {
+      res.status(400).json({ error: "Patient not found" });
+    }
+    res.json(addedEntry);
+  } catch (error) {
+    res.status(400).json({
+      error: error instanceof z.ZodError ? error.issues : "unknown error",
     });
   }
 });
