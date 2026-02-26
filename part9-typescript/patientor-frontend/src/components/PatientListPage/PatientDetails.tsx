@@ -3,7 +3,7 @@ import { Diagnosis, Patient } from "../../types";
 import patientService from "../../services/patients";
 import diagnosesService from "../../services/diagnoses";
 import { useEffect, useState } from "react";
-import { Paper, Typography } from "@mui/material";
+import { Button, Paper, Typography } from "@mui/material";
 import MaleIcon from "@mui/icons-material/Male";
 import FemaleIcon from "@mui/icons-material/Female";
 import TransgenderIcon from "@mui/icons-material/Transgender";
@@ -72,6 +72,9 @@ const PatientDetails = () => {
                 </Paper>
               );
             })}
+        <Button variant="contained" color="primary" sx={{ mt: 2 }}>
+          ADD NEW ENTRY
+        </Button>
       </div>
     </div>
   );
