@@ -12,6 +12,7 @@ import {
 import { useState } from "react";
 import {
   BaseEntryWithoutId,
+  Diagnosis,
   Discharge,
   EntryWithoutId,
   Patient,
@@ -27,6 +28,7 @@ interface EntryFormProps {
   setPatient: React.Dispatch<React.SetStateAction<Patient | undefined>>;
   notify: (msg: string) => void;
   setShowForm: React.Dispatch<React.SetStateAction<boolean>>;
+  diagnoses: Diagnosis[];
 }
 
 type EntryType = "HealthCheck" | "Hospital" | "OccupationalHealthcare";
@@ -37,12 +39,13 @@ const EntryForm = ({
   setPatient,
   notify,
   setShowForm,
+  diagnoses,
 }: EntryFormProps) => {
   // new healthcheck entry states
   const [description, setDescription] = useState<string>("");
   const [date, setDate] = useState<string>("");
   const [specialist, setSpecialist] = useState<string>("");
-  const [diagnosisCodes, setDiagnosisCodes] = useState<string>("");
+  const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([]);
   const [entryType, setEntryType] = useState<EntryType>("HealthCheck");
 
   // HealthCheck specific
@@ -65,7 +68,7 @@ const EntryForm = ({
     setDescription("");
     setDate("");
     setSpecialist("");
-    setDiagnosisCodes("");
+    setDiagnosisCodes([]);
     setHealthCheckRating(0);
     setDischarge({ date: "", criteria: "" });
     setEmployerName("");
@@ -93,7 +96,7 @@ const EntryForm = ({
       description,
       date,
       specialist,
-      diagnosisCodes: diagnosisCodes.split(", "),
+      diagnosisCodes,
     };
 
     switch (entryType) {
@@ -182,8 +185,10 @@ const EntryForm = ({
       />
       <TextField
         type="date"
+        label="Date"
         value={date}
         onChange={({ target }) => setDate(target.value)}
+        InputLabelProps={{ shrink: true }}
       />
       <TextField
         type="text"
@@ -191,12 +196,30 @@ const EntryForm = ({
         value={specialist}
         onChange={({ target }) => setSpecialist(target.value)}
       />
-      <TextField
-        type="text"
-        label="Diagnosis Codes"
-        value={diagnosisCodes}
-        onChange={({ target }) => setDiagnosisCodes(target.value)}
-      />
+
+      {/* Diagnosis codes */}
+      <FormControl>
+        <InputLabel id="entry-type-label">Diagnosis Codes</InputLabel>
+        <Select
+          value={diagnosisCodes}
+          label="Diagnosis Codes"
+          multiple
+          onChange={({ target }) =>
+            setDiagnosisCodes(
+              // narrowing type for string[]
+              typeof target.value === "string"
+                ? target.value.split(", ")
+                : target.value,
+            )
+          }
+        >
+          {diagnoses.map((d) => (
+            <MenuItem value={d.code} key={d.code}>
+              {d.code}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
 
       {/* HealthCheck */}
       {entryType === "HealthCheck" && (
@@ -204,19 +227,24 @@ const EntryForm = ({
           type="number"
           label="HealthCheck Rating"
           value={healthCheckRating}
-          // inputProps={{ min: 0, max: 3, step: 1 }}
+          inputProps={{ min: 0, max: 3, step: 1 }}
           onChange={({ target }) => setHealthCheckRating(Number(target.value))}
         />
       )}
+
       {/* Hospital */}
       {entryType === "Hospital" && (
         <>
           <TextField
+            type="date"
             label="Discharge Date"
             value={discharge.date}
             onChange={({ target }) =>
               setDischarge({ ...discharge, date: target.value })
             }
+            InputLabelProps={{
+              shrink: true,
+            }}
           />
           <TextField
             label="Discharge Criteria"
@@ -237,18 +265,26 @@ const EntryForm = ({
             onChange={({ target }) => setEmployerName(target.value)}
           />
           <TextField
+            type="date"
             label="Sickleave Start Date"
             value={sickLeave.startDate}
             onChange={({ target }) =>
               setSickLeave({ ...sickLeave, startDate: target.value })
             }
+            InputLabelProps={{
+              shrink: true,
+            }}
           />
           <TextField
+            type="date"
             label="Sickleave End Date"
             value={sickLeave.endDate}
             onChange={({ target }) =>
               setSickLeave({ ...sickLeave, endDate: target.value })
             }
+            InputLabelProps={{
+              shrink: true,
+            }}
           />
         </>
       )}

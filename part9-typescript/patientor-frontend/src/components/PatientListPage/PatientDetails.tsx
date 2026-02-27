@@ -73,6 +73,7 @@ const PatientDetails = ({ notify }: PatientDetailsProps) => {
             setPatient={setPatient}
             notify={notify}
             setShowForm={setShowForm}
+            diagnoses={diagnoses}
           />
         )}
       </div>
