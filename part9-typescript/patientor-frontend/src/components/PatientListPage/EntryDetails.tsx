@@ -4,12 +4,7 @@ import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
 import HealthAndSafetyIcon from "@mui/icons-material/HealthAndSafety";
 import { Diagnosis, Entry } from "../../types";
 import { Typography } from "@mui/material";
-
-const assertNever = (value: never): never => {
-  throw new Error(
-    `Unhandled discriminated union member: ${JSON.stringify(value)}`,
-  );
-};
+import { assertNever } from "../../utility/assertNever";
 
 const getHealthRatingColor = (rating: number) => {
   switch (rating) {
