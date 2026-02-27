@@ -9,9 +9,13 @@ import { Patient } from "./types";
 import patientService from "./services/patients";
 import PatientListPage from "./components/PatientListPage";
 import PatientDetails from "./components/PatientListPage/PatientDetails";
+import { Notification } from "./components/Notification";
+import { useNotification } from "./utility/useNotification";
+import { Home } from "@mui/icons-material";
 
 const App = () => {
   const [patients, setPatients] = useState<Patient[]>([]);
+  const [message, notify] = useNotification();
 
   useEffect(() => {
     void axios.get<void>(`${apiBaseUrl}/ping`);
@@ -30,9 +34,16 @@ const App = () => {
           <Typography variant="h3" style={{ marginBottom: "0.5em" }}>
             Patientor
           </Typography>
-          <Button component={Link} to="/" variant="contained" color="primary">
+          <Button
+            component={Link}
+            to="/"
+            variant="contained"
+            color="primary"
+            startIcon={<Home />}
+          >
             Home
           </Button>
+          <Notification message={message} />
           <Divider hidden />
           <Routes>
             <Route
@@ -44,7 +55,10 @@ const App = () => {
                 />
               }
             />
-            <Route path="/patients/:id" element={<PatientDetails />} />
+            <Route
+              path="/patients/:id"
+              element={<PatientDetails notify={notify} />}
+            />
           </Routes>
         </Container>
       </Router>

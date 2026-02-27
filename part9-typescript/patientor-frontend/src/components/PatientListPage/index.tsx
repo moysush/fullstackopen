@@ -18,6 +18,7 @@ import HealthRatingBar from "../HealthRatingBar";
 
 import patientService from "../../services/patients";
 import { Link } from "react-router-dom";
+import { Add } from "@mui/icons-material";
 
 interface Props {
   patients: Patient[];
@@ -37,7 +38,7 @@ const PatientListPage = ({ patients, setPatients }: Props) => {
 
   const submitNewPatient = async (values: PatientFormValues) => {
     try {
-      const patient = await patientService.create(values);
+      const patient = await patientService.createPatient(values);
       setPatients(patients.concat(patient));
       setModalOpen(false);
     } catch (e: unknown) {
@@ -96,7 +97,11 @@ const PatientListPage = ({ patients, setPatients }: Props) => {
         error={error}
         onClose={closeModal}
       />
-      <Button variant="contained" onClick={() => openModal()}>
+      <Button
+        variant="contained"
+        onClick={() => openModal()}
+        startIcon={<Add />}
+      >
         Add New Patient
       </Button>
     </div>

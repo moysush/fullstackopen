@@ -22,6 +22,7 @@ const getHealthRatingColor = (rating: number) => {
     case 3:
       return "red";
     default:
+      console.warn('Unexpected health rating:', rating);
       return "inherit";
   }
 };
